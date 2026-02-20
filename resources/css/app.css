@@ -1,0 +1,345 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.jsx';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Primary: gold (match reference image) */
+    --color-glow: #f59e0b;
+    --color-glow-dim: rgba(245, 158, 11, 0.15);
+    --color-glow-border: rgba(245, 158, 11, 0.45);
+}
+
+/*
+ * Product card colors – change one by one in :root below:
+ *   accent-top = thin line at top of card
+ *   logo-start / logo-end = gradient behind the logo icon
+ *   tagline = subtitle under the product name
+ *   checkmark-bg / checkmark-border = feature list check circle
+ *   btn-start / btn-mid / btn-end = "See More" button gradient
+ *   status-available = green pill (Available)
+ *   status-coming = pill for Coming Soon
+ */
+:root {
+    --product-card-accent-top: linear-gradient(90deg, #fcd34d, #f59e0b, #d97706);
+    --product-card-logo-start: #fcd34d;
+    --product-card-logo-end: #d97706;
+    --product-card-tagline: #f59e0b;
+    --product-card-checkmark-bg: rgba(245, 158, 11, 0.2);
+    --product-card-checkmark-border: #f59e0b;
+    --product-card-btn-start: #fcd34d;
+    --product-card-btn-mid: #f59e0b;
+    --product-card-btn-end: #d97706;
+    --product-card-status-available: #10b981;
+    --product-card-status-coming: #f59e0b;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Primary accent: gold */
+.section-label {
+    @apply text-sm font-semibold uppercase tracking-widest mb-3;
+    color: var(--color-glow);
+}
+.section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight;
+}
+.section-title-accent {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #fcd34d, #f59e0b, #d97706);
+}
+.section-divider {
+    @apply w-16 h-0.5 rounded-full mx-auto mt-4;
+    background: linear-gradient(to right, #fcd34d, #f59e0b);
+}
+.section-desc {
+    @apply text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed;
+}
+
+.card-hover {
+    @apply transition-all duration-300 ease-out;
+}
+.card-hover:hover {
+    @apply -translate-y-1 shadow-xl;
+}
+
+.btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3.5 rounded-lg font-semibold text-gray-900
+           shadow-lg hover:shadow-xl
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0c12]
+           transition-all duration-200;
+    background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
+    box-shadow: 0 10px 40px -10px rgba(245, 158, 11, 0.5);
+}
+.btn-primary:hover {
+    box-shadow: 0 20px 50px -10px rgba(245, 158, 11, 0.6);
+    filter: brightness(1.05);
+}
+.btn-primary:focus {
+    @apply ring-[#f59e0b];
+}
+
+.btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3.5 rounded-lg font-semibold
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0c12]
+           transition-all duration-200;
+    color: var(--color-glow);
+    border: 1px solid var(--color-glow-border);
+}
+.btn-secondary:hover {
+    background: var(--color-glow-dim);
+    border-color: var(--color-glow);
+}
+.btn-secondary:focus {
+    @apply ring-[#f59e0b]/50;
+}
+
+.input-professional {
+    @apply w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500
+           focus:outline-none focus:ring-1
+           transition-colors duration-200;
+}
+.input-professional:focus {
+    border-color: var(--color-glow-border);
+    box-shadow: 0 0 0 3px var(--color-glow-dim);
+}
+
+/* Hide scrollbar but keep scroll behavior */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Loading screen – uncommon: pulsing arcs + running bar */
+@keyframes loading-ring-pulse {
+    0%, 100% {
+        transform: scale(0.92);
+        opacity: 0.5;
+        border-width: 2px;
+    }
+    50% {
+        transform: scale(1.08);
+        opacity: 0.9;
+        border-width: 1px;
+    }
+}
+@keyframes loading-bar-run {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+}
+.loading-screen-ring {
+    animation: loading-ring-pulse 2.2s ease-in-out infinite;
+}
+.loading-screen-bar {
+    animation: loading-bar-run 1.4s ease-in-out infinite;
+}
+
+@keyframes blob {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(24px, -40px) scale(1.05); }
+    66% { transform: translate(-16px, 16px) scale(0.95); }
+}
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.animate-blob {
+    animation: blob 8s ease-in-out infinite;
+}
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+.animate-fade-in {
+    animation: fade-in-up 0.8s ease-out forwards;
+}
+.animate-fade-in-delay {
+    animation: fade-in-up 0.8s ease-out 0.2s both;
+}
+.animate-fade-in-delay-2 {
+    animation: fade-in-up 0.8s ease-out 0.4s both;
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Hero: single fixed circle orbit – --orbit-radius same for all, --orbit-delay spreads logos */
+@keyframes hero-orbit {
+    from { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
+}
+.hero-orbit-ring {
+    position: relative;
+    width: calc(var(--orbit-radius) * 2 + 64px);
+    height: calc(var(--orbit-radius) * 2 + 64px);
+}
+.hero-orbit-circle-line {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--orbit-radius) * 2);
+    height: calc(var(--orbit-radius) * 2);
+    margin-left: calc(-1 * var(--orbit-radius));
+    margin-top: calc(-1 * var(--orbit-radius));
+    border-radius: 50%;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    pointer-events: none;
+}
+.hero-planet {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    margin-top: -26px;
+    animation: hero-orbit var(--orbit-duration, 28s) linear infinite;
+    animation-delay: var(--orbit-delay, 0s);
+    will-change: transform;
+    transition: transform 0.6s ease-out;
+}
+.hero-planet.hero-planet--focused {
+    animation: none;
+    transform: translate(0, 0) scale(2.77);
+    z-index: 15;
+}
+/* Main circle (company logo + focused product logo): clear and visible */
+.hero-main-circle {
+    background: #0f1116;
+    border: 2px solid rgba(245, 158, 11, 0.65);
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 16px 48px -12px rgba(0, 0, 0, 0.65), 0 0 48px -8px rgba(245, 158, 11, 0.28);
+    position: relative;
+    z-index: 12;
+}
+.hero-planet.hero-planet--focused .hero-planet-inner {
+    width: 100%;
+    height: 100%;
+    background: #0f1116;
+    border-width: 2px;
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2), 0 16px 48px -12px rgba(0, 0, 0, 0.6), 0 0 40px -8px rgba(245, 158, 11, 0.3);
+}
+.hero-planet-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-glow-dim);
+    border: 1px solid var(--color-glow-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-sizing: border-box;
+}
+.hero-planet-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.hero-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f59e0b' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Square grid background for sections with solid background (like hero) */
+.section-grid-pattern {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+.section-grid-pattern::before,
+.section-grid-pattern::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+.section-grid-pattern::before {
+    opacity: 0.07;
+    background-image:
+        linear-gradient(rgba(250, 204, 21, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(250, 204, 21, 0.5) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+.section-grid-pattern::after {
+    opacity: 0.04;
+    background-image:
+        linear-gradient(rgba(234, 179, 8, 0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(234, 179, 8, 0.6) 1px, transparent 1px);
+    background-size: 64px 64px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #fcd34d, #f59e0b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.text-glow {
+    color: #f59e0b;
+}
+.border-glow {
+    border-color: var(--color-glow-border);
+}
+.shadow-glow {
+    box-shadow: 0 0 30px -5px rgba(245, 158, 11, 0.4);
+}
+
+/* Product card (Smarty Menu style) */
+.product-card {
+    @apply rounded-2xl bg-[#0f1116] border border-white/5 overflow-hidden flex flex-col h-full transition-all duration-300;
+}
+.product-card:hover {
+    @apply border-white/10 -translate-y-1;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+.product-card-accent-top {
+    height: 3px;
+    background: var(--product-card-accent-top);
+}
+.product-card-logo-box {
+    background: linear-gradient(135deg, var(--product-card-logo-start), var(--product-card-logo-end));
+    @apply rounded-xl flex items-center justify-center w-14 h-14 text-2xl font-bold text-white shrink-0;
+}
+.product-card-tagline {
+    color: var(--product-card-tagline);
+}
+.product-card-checkmark {
+    background: var(--product-card-checkmark-bg);
+    border: 1px solid var(--product-card-checkmark-border);
+    @apply rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5;
+}
+.product-card-btn {
+    background: linear-gradient(90deg, var(--product-card-btn-start), var(--product-card-btn-mid), var(--product-card-btn-end));
+    @apply text-white font-semibold rounded-lg px-5 py-3 inline-flex items-center justify-center gap-2 transition-all duration-200;
+}
+.product-card-btn:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 8px 24px -6px rgba(245, 158, 11, 0.45);
+}
+.product-card-status-available {
+    background: var(--product-card-status-available);
+    @apply text-white text-xs font-semibold px-3 py-1.5 rounded-full;
+}
+.product-card-status-coming {
+    background: var(--product-card-status-coming);
+    @apply text-white text-xs font-semibold px-3 py-1.5 rounded-full;
+}
