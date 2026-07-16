@@ -100,18 +100,18 @@ function TerminalPanel({ project, isRightSide = false }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col h-full max-h-[480px] rounded-xl overflow-hidden border border-sky-500/20 bg-[#060c18]/80 backdrop-blur-xl shadow-2xl shadow-sky-900/20 relative z-10"
+            className="flex flex-col h-full max-h-[360px] lg:max-h-[480px] rounded-xl overflow-hidden border border-sky-500/20 bg-[#060c18]/90 backdrop-blur-xl shadow-2xl shadow-sky-900/20 relative z-10"
         >
             {/* Terminal header */}
-            <div className="flex items-center gap-2 px-3 py-2 bg-[#0a1628] border-b border-sky-500/10 shrink-0">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
-                <span className="ml-2 text-[10px] text-sky-400/50 font-mono">system@dsrzone: ~/projects</span>
+            <div className="flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 lg:py-2 bg-[#0a1628] border-b border-sky-500/10 shrink-0">
+                <span className="w-2 lg:w-2.5 h-2 lg:h-2.5 rounded-full bg-red-500/70" />
+                <span className="w-2 lg:w-2.5 h-2 lg:h-2.5 rounded-full bg-yellow-500/70" />
+                <span className="w-2 lg:w-2.5 h-2 lg:h-2.5 rounded-full bg-green-500/70" />
+                <span className="ml-1.5 lg:ml-2 text-[9px] lg:text-[10px] text-sky-400/50 font-mono">system@dsrzone: ~/projects</span>
             </div>
 
             {/* Cover image (Office Temp) */}
-            <div className="relative h-32 shrink-0 border-b border-sky-500/10">
+            <div className="relative h-20 lg:h-32 shrink-0 border-b border-sky-500/10">
                 <img src={coverImage} alt="Cover" className="w-full h-full object-cover opacity-60" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#060c18] to-transparent" />
                 
@@ -130,25 +130,25 @@ function TerminalPanel({ project, isRightSide = false }) {
             </div>
 
             {/* Content Body */}
-            <div className="flex-1 p-4 font-mono text-xs overflow-auto flex flex-col">
-                <p className="text-sky-400/50 mb-3">$ execute project_deploy.sh --id={project.id}</p>
+            <div className="flex-1 p-2.5 lg:p-4 font-mono text-[10px] lg:text-xs overflow-auto flex flex-col">
+                <p className="text-sky-400/50 mb-2 lg:mb-3">$ execute project_deploy.sh --id={project.id}</p>
                 
                 <div className="mb-1 text-sky-300/60">&gt; Title:</div>
-                <div className="text-white font-bold text-sm mb-3 h-5">
+                <div className="text-white font-bold text-xs lg:text-sm mb-2 lg:mb-3 h-4 lg:h-5">
                     <Typewriter text={project.title} speed={25} />
                 </div>
 
                 {project.client && (
                     <>
                         <div className="mb-1 text-sky-300/60">&gt; Client:</div>
-                        <div className="text-slate-300 mb-3 h-4">
+                        <div className="text-slate-300 mb-2 lg:mb-3 h-3 lg:h-4">
                             <Typewriter text={project.client} speed={25} delay={project.title?.length * 25 + 100} />
                         </div>
                     </>
                 )}
 
                 <div className="mb-1 text-sky-300/60">&gt; Output_Log:</div>
-                <div className="text-slate-400 leading-relaxed mb-4 flex-1">
+                <div className="text-slate-400 leading-relaxed mb-3 lg:mb-4 flex-1">
                     <Typewriter 
                         text={project.description || ''} 
                         speed={15} 
@@ -158,9 +158,9 @@ function TerminalPanel({ project, isRightSide = false }) {
 
                 {project.project_url && project.project_url !== '#' && (
                     <a href={project.project_url} target="_blank" rel="noopener noreferrer"
-                       className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-sky-600/10 border border-sky-500/30 text-sky-400 text-xs hover:bg-sky-600/30 hover:border-sky-400 transition-all mt-auto self-start">
+                       className="inline-flex items-center justify-center gap-1.5 px-2.5 lg:px-3 py-1.5 lg:py-2 rounded bg-sky-600/10 border border-sky-500/30 text-sky-400 text-[10px] lg:text-xs hover:bg-sky-600/30 hover:border-sky-400 transition-all mt-auto self-start">
                         View Live Site
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        <svg className="w-2.5 lg:w-3 h-2.5 lg:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     </a>
                 )}
             </div>
@@ -172,7 +172,7 @@ function TerminalPanel({ project, isRightSide = false }) {
 /* ─── Main ─────────────────────────────────────────────────────────────── */
 export default function SriLankaMap() {
     const [projects, setProjects] = useState([]);
-    const [activeIdx, setActiveIdx] = useState(0);
+    const [step, setStep] = useState(0);
     const [paused, setPaused] = useState(false);
 
     useEffect(() => {
@@ -183,25 +183,53 @@ export default function SriLankaMap() {
 
     const n = projects.length;
 
-    /* Auto-rotation */
+    /* Auto-rotation: alternate left and right panel updates every 4s */
     useEffect(() => {
         if(paused || n<2) return;
-        const id = setInterval(() => setActiveIdx(i=>(i+1)%n), 6500); // 6.5s to allow typewriter to finish
+        const id = setInterval(() => setStep(s => s + 1), 4000); 
         return ()=>clearInterval(id);
     },[paused,n]);
 
-    const leftIdx = activeIdx;
-    const rightIdx = (activeIdx + 1) % n;
+    /* Calculate alternating indices based on step */
+    const getIndices = (s) => {
+        if (n < 2) return [0, 0];
+        let lCount = Math.floor((s + 1) / 2);
+        let rCount = Math.floor(s / 2);
+        let l = (lCount * 2) % n;
+        let r = (rCount * 2 + 1) % n;
+        if (l < 0) l += n;
+        if (r < 0) r += n;
+        return [l, r];
+    };
+
+    const [leftIdx, rightIdx] = getIndices(step);
     
     const leftProj = projects[leftIdx];
     const rightProj = projects[rightIdx];
 
-    const prev = ()=>{ setPaused(true); setActiveIdx(i=>(i-1+n)%n); };
-    const next = ()=>{ setPaused(true); setActiveIdx(i=>(i+1)%n); };
+    const prev = ()=>{ setPaused(true); setStep(s => s - 1); };
+    const next = ()=>{ setPaused(true); setStep(s => s + 1); };
 
     return (
         <section id="clients-map" className="relative bg-[#030610] border-t border-white/5 overflow-hidden w-full min-h-screen flex flex-col justify-center py-20">
             
+            <style>{`
+                .pin-dot { transition: all 0.3s; }
+                .pin-dot.inactive { width: 8px; height: 8px; background: rgba(56,189,248,0.4); border: 2px solid transparent; }
+                .pin-dot.is-left-active { width: 14px; height: 14px; background: #38bdf8; border: 2px solid #bae6fd; box-shadow: 0 0 16px #38bdf8; }
+                .pin-ping.inactive { display: none; }
+                .pin-ping.is-left-active { display: block; }
+                
+                @media (min-width: 1024px) {
+                    .pin-dot.is-right-active { width: 14px; height: 14px; background: #38bdf8; border: 2px solid #bae6fd; box-shadow: 0 0 16px #38bdf8; }
+                    .pin-ping.is-right-active { display: block; }
+                }
+                @media (max-width: 1023px) {
+                    .pin-dot.is-right-active { width: 8px; height: 8px; background: rgba(56,189,248,0.4); border: 2px solid transparent; }
+                    .pin-ping.is-right-active { display: none; }
+                }
+            `}</style>
+
             {/* FULL SECTION Cyber Canvas Background */}
             <CyberCanvas />
 
@@ -221,7 +249,7 @@ export default function SriLankaMap() {
                 </ScrollReveal>
 
                 {/* Main 3-Column Layout */}
-                <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8 w-full mt-4"
+                <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-0 lg:gap-8 w-full mt-4"
                      onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
                     
                     {/* LEFT PANEL (Desktop only) */}
@@ -237,11 +265,11 @@ export default function SriLankaMap() {
                                  className="relative w-full block select-none pointer-events-none"
                                  style={{filter:'drop-shadow(0 0 20px rgba(56,189,248,0.4)) brightness(1.15) saturate(1.6)',zIndex:10}} />
 
-                            {/* Connector Lines SVG */}
+                            {/* Desktop Connector Lines SVG */}
                             <svg className="absolute inset-0 pointer-events-none hidden lg:block" width="100%" height="100%" style={{zIndex:12, overflow:'visible'}}>
                                 {leftProj && (
                                     <>
-                                        <line x1={`${leftProj.map_x}%`} y1={`${leftProj.map_y}%`} x2="-20%" y2={`${leftProj.map_y}%`} stroke="rgba(56,189,248,0.5)" strokeWidth="1" strokeDasharray="4 4" />
+                                        <line x1={`${leftProj.map_x}%`} y1={`${leftProj.map_y}%`} x2="-20%" y2={`${leftProj.map_y}%`} stroke="rgba(56,189,248,0.5)" strokeWidth="1.5" strokeDasharray="4 4" />
                                         <circle cx={`${leftProj.map_x}%`} cy={`${leftProj.map_y}%`} r="6" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" strokeWidth="1.5">
                                             <animate attributeName="r" values="6;12;6" dur="2s" repeatCount="indefinite"/>
                                             <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/>
@@ -250,8 +278,25 @@ export default function SriLankaMap() {
                                 )}
                                 {rightProj && n > 1 && (
                                     <>
-                                        <line x1={`${rightProj.map_x}%`} y1={`${rightProj.map_y}%`} x2="120%" y2={`${rightProj.map_y}%`} stroke="rgba(56,189,248,0.5)" strokeWidth="1" strokeDasharray="4 4" />
+                                        <line x1={`${rightProj.map_x}%`} y1={`${rightProj.map_y}%`} x2="120%" y2={`${rightProj.map_y}%`} stroke="rgba(56,189,248,0.5)" strokeWidth="1.5" strokeDasharray="4 4" />
                                         <circle cx={`${rightProj.map_x}%`} cy={`${rightProj.map_y}%`} r="6" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" strokeWidth="1.5">
+                                            <animate attributeName="r" values="6;12;6" dur="2.2s" repeatCount="indefinite"/>
+                                            <animate attributeName="opacity" values="1;0.2;1" dur="2.2s" repeatCount="indefinite"/>
+                                        </circle>
+                                    </>
+                                )}
+                            </svg>
+
+                            {/* Mobile Connector Lines SVG */}
+                            <svg className="absolute inset-0 pointer-events-none block lg:hidden" width="100%" height="100%" style={{zIndex:12, overflow:'visible'}}>
+                                {leftProj && (
+                                    <>
+                                        {/* Horizontal segment to center */}
+                                        <line x1={`${leftProj.map_x}%`} y1={`${leftProj.map_y}%`} x2="50%" y2={`${leftProj.map_y}%`} stroke="rgba(56,189,248,0.5)" strokeWidth="1.5" strokeDasharray="4 4" />
+                                        {/* Vertical segment straight down to the panel */}
+                                        <line x1="50%" y1={`${leftProj.map_y}%`} x2="50%" y2="calc(100% - 40px)" stroke="rgba(56,189,248,0.5)" strokeWidth="1.5" strokeDasharray="4 4" />
+                                        
+                                        <circle cx={`${leftProj.map_x}%`} cy={`${leftProj.map_y}%`} r="6" fill="rgba(56,189,248,0.4)" stroke="#38bdf8" strokeWidth="1.5">
                                             <animate attributeName="r" values="6;12;6" dur="2s" repeatCount="indefinite"/>
                                             <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/>
                                         </circle>
@@ -264,22 +309,16 @@ export default function SriLankaMap() {
                                 {projects.map((p,i) => {
                                     const isLeft = i === leftIdx;
                                     const isRight = (n > 1 && i === rightIdx);
-                                    const isA = isLeft || isRight;
+                                    const activeClass = isLeft ? 'is-left-active' : (isRight ? 'is-right-active' : 'inactive');
                                     
                                     return (
                                         <button key={p.id} type="button"
-                                            onClick={()=>{setPaused(true); setActiveIdx(i);}}
+                                            onClick={()=>{setPaused(true); setStep(i);}}
                                             title={p.map_city||p.title}
                                             className="absolute"
                                             style={{left:`${p.map_x}%`,top:`${p.map_y}%`,transform:'translate(-50%,-50%)'}}>
-                                            {isA && <span className="absolute inset-0 rounded-full animate-ping" style={{background:'rgba(56,189,248,0.4)'}} />}
-                                            <span className="relative block rounded-full transition-all duration-300"
-                                                  style={{
-                                                      width:isA?14:8, height:isA?14:8,
-                                                      background:isA?'#38bdf8':'rgba(56,189,248,0.4)',
-                                                      border:`2px solid ${isA?'#bae6fd':'transparent'}`,
-                                                      boxShadow:isA?'0 0 16px #38bdf8':'none',
-                                                  }} />
+                                            <span className={`absolute inset-0 rounded-full animate-ping pin-ping ${activeClass}`} style={{background:'rgba(56,189,248,0.4)'}} />
+                                            <span className={`relative block rounded-full pin-dot ${activeClass}`} />
                                         </button>
                                     );
                                 })}
@@ -293,18 +332,18 @@ export default function SriLankaMap() {
                     </div>
 
                     {/* MOBILE PANEL (Only 1 visible below map) */}
-                    <div className="block lg:hidden w-full max-w-md mx-auto order-3 mt-4">
+                    <div className="block lg:hidden w-[90%] max-w-[340px] mx-auto order-3 -mt-16 sm:-mt-20 relative z-20">
                         <TerminalPanel project={leftProj} isRightSide={false} />
                         
                         {/* Mobile Controls */}
-                        <div className="flex justify-center gap-4 mt-6">
-                            <button onClick={prev} className="flex items-center gap-2 px-4 py-2 rounded-full border border-sky-500/20 text-sky-400 bg-sky-900/10 hover:bg-sky-500/20 transition-all text-sm font-semibold">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
+                        <div className="flex justify-center gap-3 mt-4">
+                            <button onClick={prev} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-sky-500/20 text-sky-400 bg-sky-900/20 hover:bg-sky-500/20 transition-all text-[10px] font-semibold backdrop-blur-md">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
                                 Prev
                             </button>
-                            <button onClick={next} className="flex items-center gap-2 px-4 py-2 rounded-full border border-sky-500/20 text-sky-400 bg-sky-900/10 hover:bg-sky-500/20 transition-all text-sm font-semibold">
+                            <button onClick={next} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-sky-500/20 text-sky-400 bg-sky-900/20 hover:bg-sky-500/20 transition-all text-[10px] font-semibold backdrop-blur-md">
                                 Next
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
                             </button>
                         </div>
                     </div>
