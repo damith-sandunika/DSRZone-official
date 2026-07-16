@@ -5,6 +5,7 @@ import GoldenHero from './GoldenHero';
 import About from './About';
 import Services from './Services';
 import Products from './Products';
+import SriLankaMap from './SriLankaMap';
 import Portfolio from './Portfolio';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
@@ -22,6 +23,7 @@ function HomePage() {
                 <About />
                 <Services />
                 <Products />
+                <SriLankaMap />
                 <Portfolio />
                 <Testimonials />
                 <Contact />

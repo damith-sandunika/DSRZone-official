@@ -67,6 +67,9 @@ class ProjectController extends Controller
             'technologies.*' => 'string|max:100',
             'technologies_text' => 'nullable|string',
             'order' => 'nullable|integer',
+            'map_x' => 'nullable|numeric|min:0|max:100',
+            'map_y' => 'nullable|numeric|min:0|max:100',
+            'map_city' => 'nullable|string|max:100',
         ]);
         $data['order'] = $data['order'] ?? 0;
         $data['technologies'] = $this->parseTechnologies($request);

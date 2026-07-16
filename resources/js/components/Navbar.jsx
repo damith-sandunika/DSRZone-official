@@ -10,7 +10,7 @@ function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navLinkClass = "text-gray-300 hover:text-white text-sm font-medium pb-1 transition-colors relative after:absolute after:left-0 after:bottom-0 after:h-px after:w-0 after:bg-[#f59e0b] after:transition-all after:duration-200 hover:after:w-full";
+    const navLinkClass = "text-gray-300 hover:text-white text-sm font-medium pb-1 transition-colors relative after:absolute after:left-0 after:bottom-0 after:h-px after:w-0 after:bg-[#3b82f6] after:transition-all after:duration-200 hover:after:w-full";
 
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -21,7 +21,7 @@ function Navbar() {
                     <a href="#home" className="flex items-center h-full">
                         <img
                             src="/images/logo.png"
-                            alt="Sldigitasystem"
+                            alt="DSRZone.com"
                             className="h-20 lg:h-28 w-auto object-contain block"
                             fetchPriority="high"
                         />
@@ -32,6 +32,7 @@ function Navbar() {
                         <a href="#about" className={navLinkClass}>About</a>
                         <a href="#services" className={navLinkClass}>Services</a>
                         <a href="#products" className={navLinkClass}>Products</a>
+                        <a href="#clients-map" className={navLinkClass}>Clients</a>
                         <a href="#portfolio" className={navLinkClass}>Portfolio</a>
                         <a href="#contact" className="btn-primary text-sm py-2.5 px-5">
                             Contact
@@ -62,6 +63,7 @@ function Navbar() {
                         <a href="#about" className="block py-2.5 text-gray-300 hover:text-white font-medium" onClick={() => setIsMobileMenuOpen(false)}>About</a>
                         <a href="#services" className="block py-2.5 text-gray-300 hover:text-white font-medium" onClick={() => setIsMobileMenuOpen(false)}>Services</a>
                         <a href="#products" className="block py-2.5 text-gray-300 hover:text-white font-medium" onClick={() => setIsMobileMenuOpen(false)}>Products</a>
+                        <a href="#clients-map" className="block py-2.5 text-gray-300 hover:text-white font-medium" onClick={() => setIsMobileMenuOpen(false)}>Clients</a>
                         <a href="#portfolio" className="block py-2.5 text-gray-300 hover:text-white font-medium" onClick={() => setIsMobileMenuOpen(false)}>Portfolio</a>
                         <a href="#contact" className="block mt-3 btn-primary text-center" onClick={() => setIsMobileMenuOpen(false)}>Contact</a>
                     </div>

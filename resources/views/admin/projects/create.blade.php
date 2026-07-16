@@ -52,6 +52,51 @@
             <label for="order" class="block text-sm text-gray-400 mb-1">Order</label>
             <input type="number" name="order" id="order" value="{{ old('order', 0) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
         </div>
+
+        {{-- ── Map Location Picker ── --}}
+        <div>
+            <label class="block text-sm text-gray-400 mb-2">📍 Map Location (click on map to place pin)</label>
+            <div class="relative inline-block border border-amber-500/30 rounded overflow-hidden cursor-crosshair" style="max-width:320px;width:100%">
+                <img id="map-picker-img" src="/images/sri lanka Map.png" alt="Sri Lanka Map"
+                     style="width:100%;display:block;background:#06090f;filter:drop-shadow(0 0 8px rgba(59,130,246,0.4))">
+                <div id="map-pin" style="display:none;position:absolute;width:14px;height:14px;border-radius:50%;background:#3b82f6;border:2px solid #93c5fd;box-shadow:0 0 10px rgba(59,130,246,0.8);transform:translate(-50%,-50%);pointer-events:none"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1" id="map-coords-label">No location selected</p>
+            <input type="hidden" name="map_x" id="map_x" value="{{ old('map_x') }}">
+            <input type="hidden" name="map_y" id="map_y" value="{{ old('map_y') }}">
+            <div class="mt-2">
+                <label for="map_city" class="block text-xs text-gray-400 mb-1">City / Location name</label>
+                <input type="text" name="map_city" id="map_city" value="{{ old('map_city') }}"
+                       placeholder="e.g. Colombo"
+                       class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white text-sm focus:border-amber-500 focus:outline-none">
+            </div>
+        </div>
+        <script>
+            (function(){
+                const img = document.getElementById('map-picker-img');
+                const pin = document.getElementById('map-pin');
+                const xIn = document.getElementById('map_x');
+                const yIn = document.getElementById('map_y');
+                const lbl = document.getElementById('map-coords-label');
+                function setPin(x, y) {
+                    pin.style.display = 'block';
+                    pin.style.left = x + '%';
+                    pin.style.top  = y + '%';
+                    xIn.value = x.toFixed(2);
+                    yIn.value = y.toFixed(2);
+                    lbl.textContent = 'Location set: ' + x.toFixed(1) + '%, ' + y.toFixed(1) + '%';
+                    lbl.style.color = '#60a5fa';
+                }
+                img.parentElement.addEventListener('click', function(e){
+                    const r = img.getBoundingClientRect();
+                    const x = ((e.clientX - r.left) / r.width  * 100);
+                    const y = ((e.clientY - r.top)  / r.height * 100);
+                    setPin(x, y);
+                });
+                const ox = xIn.value, oy = yIn.value;
+                if(ox && oy) setPin(parseFloat(ox), parseFloat(oy));
+            })();
+        </script>
         <label class="flex items-center gap-2 text-sm text-gray-400">
             <input type="hidden" name="is_featured" value="0">
             <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }} class="rounded border-amber-500/50 text-amber-500 focus:ring-amber-500">
