@@ -24,6 +24,14 @@
             <textarea name="description" id="description" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('description') }}</textarea>
         </div>
         <div>
+            <label for="problem" class="block text-sm text-gray-400 mb-1">Problem / Challenge faced</label>
+            <textarea name="problem" id="problem" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('problem') }}</textarea>
+        </div>
+        <div>
+            <label for="solution" class="block text-sm text-gray-400 mb-1">Our Solution</label>
+            <textarea name="solution" id="solution" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('solution') }}</textarea>
+        </div>
+        <div>
             <label for="image" class="block text-sm text-gray-400 mb-1">Image (optional)</label>
             <input type="file" name="image" id="image" accept="image/*" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none file:mr-2 file:rounded file:border-0 file:bg-amber-500/20 file:px-3 file:py-1 file:text-amber-400">
             <p class="text-xs text-gray-500 mt-1">Max 5MB. JPEG, PNG, GIF, WebP.</p>

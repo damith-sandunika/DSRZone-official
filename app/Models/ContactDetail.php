@@ -11,6 +11,9 @@ class ContactDetail extends Model
         'phone',
         'linkedin_url',
         'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'youtube_url',
         'whatsapp',
     ];
 

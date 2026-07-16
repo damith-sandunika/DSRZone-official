@@ -13,6 +13,8 @@ class Project extends Model
         'product_id',
         'title',
         'description',
+        'problem',
+        'solution',
         'image',
         'category',
         'client',

@@ -59,6 +59,8 @@ class ProjectController extends Controller
             'product_id' => 'nullable|exists:products,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'problem' => 'nullable|string',
+            'solution' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'client' => 'nullable|string|max:255',
             'project_date' => 'nullable|date',

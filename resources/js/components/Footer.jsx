@@ -63,7 +63,9 @@ function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
                     {/* Column 1: Company */}
                     <div>
-                        <a href="#home" className="text-lg font-bold gradient-text">DSRZone.com</a>
+                        <a href="#home" className="inline-block">
+                            <img src="/images/DSRZone logo.png" alt="DSRZone.com" className="h-12 w-auto object-contain" />
+                        </a>
                         <p className="mt-3 text-sm text-gray-500 leading-relaxed max-w-xs">
                             Architects of the digital future, blending technology and creativity to build modern solutions.
                         </p>

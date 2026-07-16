@@ -25,6 +25,14 @@
             <textarea name="description" id="description" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('description', $project->description) }}</textarea>
         </div>
         <div>
+            <label for="problem" class="block text-sm text-gray-400 mb-1">Problem / Challenge faced</label>
+            <textarea name="problem" id="problem" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('problem', $project->problem) }}</textarea>
+        </div>
+        <div>
+            <label for="solution" class="block text-sm text-gray-400 mb-1">Our Solution</label>
+            <textarea name="solution" id="solution" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('solution', $project->solution) }}</textarea>
+        </div>
+        <div>
             <label for="image" class="block text-sm text-gray-400 mb-1">Image (optional)</label>
             @php $imgUrl = $project->image && str_starts_with($project->image, 'projects/') ? asset('storage/'.$project->image) : null; @endphp
             @if($imgUrl)

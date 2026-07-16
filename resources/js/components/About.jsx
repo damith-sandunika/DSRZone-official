@@ -10,54 +10,100 @@ const stats = [
 
 function About() {
     return (
-        <section id="about" className="py-24 bg-[#0f1220] border-t border-white/5 relative overflow-hidden">
-            <div className="section-grid-pattern" aria-hidden />
+        <section id="about" className="py-20 bg-[#030610] border-t border-white/5 relative overflow-hidden">
+            {/* Background cyber accents */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-blue-600/5 blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-blue-400/5 blur-[80px] pointer-events-none" />
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.6) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <ScrollReveal>
-                    <div className="text-center mb-16">
-                        <p className="section-label">About Us</p>
-                        <h2 className="section-title mt-2">
-                            <span className="section-title-accent">IT & Graphic Solutions</span>
+                    <div className="text-center mb-12 sm:mb-16">
+                        <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-blue-400/90 mb-3">About Us</p>
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-300">IT & Graphic Solutions</span>
                         </h2>
-                        <div className="section-divider" />
                     </div>
                 </ScrollReveal>
 
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                     <ScrollReveal delay={50}>
-                        <div>
-                            <h3 className="text-2xl font-bold text-white mb-6">Who We Are</h3>
-                            <div className="space-y-4 text-gray-400 leading-relaxed">
-                                <p className="text-lg">
-                                    Sldigitasystem delivers <span className="text-[#f59e0b]">IT and graphic solutions</span> that combine
-                                    software development with strong visual identity. We help brands and businesses
-                                    grow with custom software, branding, and design.
+                        <div className="bg-[#0a0c12]/60 backdrop-blur-md border border-white/5 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl transition-opacity opacity-0 group-hover:opacity-100" />
+                            
+                            <h3 className="text-lg sm:text-xl font-bold text-white mb-5 flex items-center gap-3">
+                                <span className="w-8 h-px bg-blue-500/50" />
+                                Who We Are
+                            </h3>
+                            <div className="space-y-4 text-slate-400 text-sm sm:text-sm leading-relaxed">
+                                <p>
+                                    DSRZone delivers <span className="text-blue-300 font-medium">IT and graphic solutions</span> that combine
+                                    cutting-edge software development with strong visual identity. We help brands and businesses
+                                    grow with custom software, branding, and dynamic designs.
                                 </p>
                                 <p>
-                                    From web and mobile apps to logos, brochures, and digital marketing assets,
-                                    we bring technical and creative expertise under one roof.
+                                    From web and mobile applications to modern logos, brochures, and digital marketing assets,
+                                    we bring both technical and creative expertise under one roof.
                                 </p>
                                 <p>
-                                    We work with startups and enterprises to build products and visuals that
-                                    stand out and perform.
+                                    We work closely with startups and enterprises to build highly scalable products and visually stunning graphics that
+                                    truly stand out and perform in the real world.
                                 </p>
                             </div>
                         </div>
                     </ScrollReveal>
+                    
                     <ScrollReveal delay={100}>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-3 sm:gap-5">
                             {stats.map((stat) => (
                                 <div
                                     key={stat.label}
-                                    className="card-hover rounded-xl bg-white/[0.03] p-6 border border-white/5 hover:border-[#f59e0b]/30"
+                                    className="flex flex-col items-center justify-center p-5 sm:p-6 rounded-2xl bg-[#0a0c12]/80 border border-blue-500/10 backdrop-blur-md relative overflow-hidden group hover:border-blue-500/40 hover:-translate-y-1 transition-all duration-300 shadow-xl"
                                 >
-                                    <div className="text-3xl font-bold gradient-text mb-1">{stat.value}</div>
-                                    <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    
+                                    <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200 mb-1 drop-shadow-sm">
+                                        {stat.value}
+                                    </div>
+                                    <div className="text-[9px] sm:text-[10px] text-blue-400/70 font-semibold uppercase tracking-widest text-center mt-1">
+                                        {stat.label}
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </ScrollReveal>
                 </div>
+
+                {/* Temporary Client Logos Strip */}
+                <ScrollReveal delay={200}>
+                    <div className="mt-20 pt-10 border-t border-white/5 flex flex-wrap justify-center items-center gap-10 sm:gap-24 text-slate-600 opacity-60 hover:opacity-100 transition-opacity duration-500">
+                        {/* Logo 1 */}
+                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
+                            <path d="M20 0L40 34.64H0L20 0ZM20 11.55L10 28.87H30L20 11.55Z" />
+                        </svg>
+                        {/* Logo 2 */}
+                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
+                            <rect x="5" y="5" width="14" height="14" rx="3" />
+                            <rect x="21" y="21" width="14" height="14" rx="3" />
+                            <circle cx="28" cy="12" r="7" />
+                            <circle cx="12" cy="28" r="7" />
+                        </svg>
+                        {/* Logo 3 */}
+                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
+                            <path d="M20 0C8.954 0 0 8.954 0 20C0 31.046 8.954 40 20 40C31.046 40 40 31.046 40 20C40 8.954 31.046 0 20 0ZM20 30C14.477 30 10 25.523 10 20C10 14.477 14.477 10 20 10C25.523 10 30 14.477 30 20C30 25.523 25.523 30 20 30Z" />
+                            <circle cx="20" cy="20" r="5" />
+                        </svg>
+                        {/* Logo 4 */}
+                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
+                            <path d="M0 20L10 10V15H30V10L40 20L30 30V25H10V30L0 20Z" />
+                        </svg>
+                        {/* Logo 5 */}
+                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
+                            <polygon points="20,0 40,10 40,30 20,40 0,30 0,10" />
+                            <polygon points="20,10 30,15 30,25 20,30 10,25 10,15" fill="#030610" />
+                        </svg>
+                    </div>
+                </ScrollReveal>
             </div>
         </section>
     );

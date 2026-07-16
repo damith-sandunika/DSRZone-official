@@ -23,6 +23,9 @@ class ContactDetailController extends Controller
             'phone' => 'nullable|string|max:50',
             'linkedin_url' => 'nullable|url|max:500',
             'facebook_url' => 'nullable|url|max:500',
+            'twitter_url' => 'nullable|url|max:500',
+            'instagram_url' => 'nullable|url|max:500',
+            'youtube_url' => 'nullable|url|max:500',
             'whatsapp' => 'nullable|string|max:100',
         ]);
 
