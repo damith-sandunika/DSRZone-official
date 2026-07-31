@@ -28,6 +28,7 @@ class ProjectController extends Controller
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active');
         $data['image'] = $this->handleImage($request, null);
+        $data['logo'] = $this->handleLogo($request, null);
         Project::create($data);
         return redirect()->route('admin.projects.index')->with('success', 'Project created.');
     }
@@ -43,6 +44,7 @@ class ProjectController extends Controller
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active');
         $data['image'] = $this->handleImage($request, $project->image);
+        $data['logo'] = $this->handleLogo($request, $project->logo);
         $project->update($data);
         return redirect()->route('admin.projects.index')->with('success', 'Project updated.');
     }
@@ -58,6 +60,7 @@ class ProjectController extends Controller
         $data = $request->validate([
             'product_id' => 'nullable|exists:products,id',
             'title' => 'required|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
             'description' => 'nullable|string',
             'problem' => 'nullable|string',
             'solution' => 'nullable|string',
@@ -86,6 +89,16 @@ class ProjectController extends Controller
         }
         $request->validate(['image' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120']);
         $path = $request->file('image')->store('projects', 'public');
+        return $path ?: $current;
+    }
+
+    private function handleLogo(Request $request, ?string $current): ?string
+    {
+        if (!$request->hasFile('logo')) {
+            return $current ? trim($current) : null;
+        }
+        $request->validate(['logo' => 'image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120']);
+        $path = $request->file('logo')->store('projects/logos', 'public');
         return $path ?: $current;
     }
 

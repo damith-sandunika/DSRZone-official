@@ -13,6 +13,7 @@ class Project extends Model
         'product_id',
         'title',
         'description',
+        'logo',
         'problem',
         'solution',
         'image',
@@ -24,6 +25,9 @@ class Project extends Model
         'order',
         'is_featured',
         'is_active',
+        'map_x',
+        'map_y',
+        'map_city',
     ];
 
     protected $casts = [

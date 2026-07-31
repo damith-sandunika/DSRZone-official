@@ -89,8 +89,7 @@ function Typewriter({ text, speed=22, delay=0, className='' }) {
 function TerminalPanel({ project, isRightSide = false }) {
     if(!project) return null;
     
-    // Temporary cover image
-    const coverImage = `https://picsum.photos/seed/${project.id * 15}/400/200`;
+    const coverImage = project.image || `https://picsum.photos/seed/${project.id * 15}/400/200`;
 
     return (
         <AnimatePresence mode="wait">
@@ -112,7 +111,7 @@ function TerminalPanel({ project, isRightSide = false }) {
 
             {/* Cover image (Office Temp) */}
             <div className="relative h-20 lg:h-32 shrink-0 border-b border-sky-500/10">
-                <img src={coverImage} alt="Cover" className="w-full h-full object-cover opacity-60" />
+                <img src={coverImage} alt="Cover" className="w-full h-full object-cover object-top opacity-60" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#060c18] to-transparent" />
                 
                 {/* Category & City Tags over image */}
@@ -177,8 +176,8 @@ export default function SriLankaMap() {
 
     useEffect(() => {
         axios.get('/api/v1/projects')
-            .then(r => { const m=r.data.filter(p=>p.map_x!=null&&p.map_y!=null); setProjects(m.length?m:DEMO_PINS); })
-            .catch(() => setProjects(DEMO_PINS));
+            .then(r => { const m=r.data.filter(p=>p.map_x!=null&&p.map_y!=null); setProjects(m); })
+            .catch(() => setProjects([]));
     },[]);
 
     const n = projects.length;
@@ -242,7 +241,11 @@ export default function SriLankaMap() {
                 <ScrollReveal>
                     <div className="text-center mb-12">
                         <p className="section-label">Our Reach</p>
-                        <h2 className="section-title mt-2"><span className="section-title-accent">Clients Across Sri Lanka</span></h2>
+                        <h2 className="section-title mt-2">
+                            <a href="#portfolio" className="hover:opacity-80 transition-opacity">
+                                <span className="section-title-accent">Clients Across Sri Lanka</span>
+                            </a>
+                        </h2>
                         <div className="section-divider" />
                         <p className="section-desc mt-5 max-w-2xl mx-auto">Auto-cycling through our client projects. Explore how we transformed businesses nationwide.</p>
                     </div>

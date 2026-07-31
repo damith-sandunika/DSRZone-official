@@ -55,7 +55,7 @@ function ImageCarousel({ images, title }) {
                             key={idx}
                             src={imageUrl(images[idx])}
                             alt={`${title} screenshot ${idx + 1}`}
-                            className="absolute inset-0 w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover object-top animate-autoscroll cursor-pointer"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -179,12 +179,6 @@ function ProjectCard({ project, index }) {
 
                     {/* Footer row */}
                     <div className="flex items-center justify-between mt-2">
-                        <a href="#" className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1.5 group-hover:translate-x-1 duration-300">
-                            Read more
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
-                        </a>
                         {project.project_url && (
                             <a
                                 href={project.project_url}
@@ -213,7 +207,7 @@ function Portfolio() {
     useEffect(() => {
         axios.get('/api/v1/projects')
             .then((res) => setProjects(res.data))
-            .catch(() => setProjects(fallbackProjects))
+            .catch(() => setProjects([]))
             .finally(() => setLoading(false));
     }, []);
 

@@ -343,3 +343,39 @@ html {
     background: var(--product-card-status-coming);
     @apply text-white text-xs font-semibold px-3 py-1.5 rounded-full;
 }
+
+@keyframes autoscroll {
+    0%, 20% { object-position: top; }
+    80%, 100% { object-position: bottom; }
+}
+.animate-autoscroll {
+    animation: autoscroll 35s linear infinite alternate;
+}
+.animate-autoscroll:hover {
+    animation-play-state: paused;
+}
+
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+.animate-marquee {
+    animation: marquee 20s linear infinite;
+}
+.logo-slide {
+    width: calc((100vw - 3rem) / 3);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@media (min-width: 768px) {
+    .logo-slide {
+        width: calc((100vw - 4rem) / 5);
+    }
+}
+@media (min-width: 1280px) {
+    .logo-slide {
+        width: calc(1280px / 5);
+    }
+}

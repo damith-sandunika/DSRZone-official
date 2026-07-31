@@ -98,8 +98,8 @@ export default function Services() {
                         );
                     })}
                     {/* Shadow Overlays to ensure text readability */}
-                    <div className="absolute inset-0 bg-[#030610]/70 md:bg-[#030610]/40" />
-                    <div className="absolute inset-y-0 left-0 w-full md:w-2/3 bg-gradient-to-r from-[#030610] via-[#030610]/95 to-transparent" />
+                    <div className="absolute inset-0 bg-[#030610]/80 md:bg-[#030610]/40" />
+                    <div className="hidden md:block absolute inset-y-0 left-0 w-full md:w-2/3 bg-gradient-to-r from-[#030610] via-[#030610]/95 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#030610] to-transparent" />
                 </div>
 
@@ -123,8 +123,8 @@ export default function Services() {
                                 transition={{ duration: 0.4, ease: 'easeOut' }}
                                 className="w-full max-w-lg"
                             >
-                                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-3xl sm:text-4xl mb-6 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
-                                    {active?.icon || '⚙️'}
+                                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-xl sm:text-2xl font-black tracking-widest text-blue-400 mb-6 shadow-[0_0_30px_rgba(59,130,246,0.15)] font-mono">
+                                    {String(activeStep + 1).padStart(2, '0')}
                                 </div>
                                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-4 leading-tight drop-shadow-md">
                                     {active?.title}

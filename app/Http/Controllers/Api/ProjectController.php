@@ -40,12 +40,18 @@ class ProjectController extends Controller
             'product' => $p->product ? ['id' => $p->product->id, 'name' => $p->product->name, 'slug' => $p->product->slug] : null,
             'title' => $p->title,
             'description' => $p->description,
+            'problem' => $p->problem,
+            'solution' => $p->solution,
             'image' => $this->normalizeImagePath($p->image),
+            'logo' => $this->normalizeImagePath($p->logo),
             'category' => $p->category,
             'client' => $p->client,
             'project_date' => $p->project_date?->format('Y-m-d'),
             'project_url' => $p->project_url,
             'technologies' => $p->technologies ?? [],
+            'map_x' => $p->map_x,
+            'map_y' => $p->map_y,
+            'map_city' => $p->map_city,
         ];
     }
 

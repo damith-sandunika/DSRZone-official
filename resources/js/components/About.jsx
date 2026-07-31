@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from '../config/axios';
 import ScrollReveal from './ScrollReveal';
+import { imageUrl } from '../utils/imageUrl';
 
 const stats = [
     { value: '100+', label: 'Projects Delivered' },
@@ -9,6 +11,19 @@ const stats = [
 ];
 
 function About() {
+    const [logos, setLogos] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        axios.get('/api/v1/projects')
+            .then(res => {
+                const projectsWithLogos = res.data.filter(p => p.logo);
+                setLogos(projectsWithLogos.map(p => p.logo));
+            })
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    }, []);
+
     return (
         <section id="about" className="py-20 bg-[#030610] border-t border-white/5 relative overflow-hidden">
             {/* Background cyber accents */}
@@ -76,32 +91,22 @@ function About() {
 
                 {/* Temporary Client Logos Strip */}
                 <ScrollReveal delay={200}>
-                    <div className="mt-20 pt-10 border-t border-white/5 flex flex-wrap justify-center items-center gap-10 sm:gap-24 text-slate-600 opacity-60 hover:opacity-100 transition-opacity duration-500">
-                        {/* Logo 1 */}
-                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
-                            <path d="M20 0L40 34.64H0L20 0ZM20 11.55L10 28.87H30L20 11.55Z" />
-                        </svg>
-                        {/* Logo 2 */}
-                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
-                            <rect x="5" y="5" width="14" height="14" rx="3" />
-                            <rect x="21" y="21" width="14" height="14" rx="3" />
-                            <circle cx="28" cy="12" r="7" />
-                            <circle cx="12" cy="28" r="7" />
-                        </svg>
-                        {/* Logo 3 */}
-                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
-                            <path d="M20 0C8.954 0 0 8.954 0 20C0 31.046 8.954 40 20 40C31.046 40 40 31.046 40 20C40 8.954 31.046 0 20 0ZM20 30C14.477 30 10 25.523 10 20C10 14.477 14.477 10 20 10C25.523 10 30 14.477 30 20C30 25.523 25.523 30 20 30Z" />
-                            <circle cx="20" cy="20" r="5" />
-                        </svg>
-                        {/* Logo 4 */}
-                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
-                            <path d="M0 20L10 10V15H30V10L40 20L30 30V25H10V30L0 20Z" />
-                        </svg>
-                        {/* Logo 5 */}
-                        <svg className="h-8 sm:h-10 w-auto hover:text-blue-400 transition-colors duration-300" viewBox="0 0 40 40" fill="currentColor">
-                            <polygon points="20,0 40,10 40,30 20,40 0,30 0,10" />
-                            <polygon points="20,10 30,15 30,25 20,30 10,25 10,15" fill="#030610" />
-                        </svg>
+                    <div className="mt-20 pt-10 border-t border-white/5 overflow-hidden relative">
+                        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+                            {/* Duplicate list exactly ONCE to make -50% translation seamless */}
+                            {[...logos, ...logos].map((logo, i) => (
+                                <div key={i} className="logo-slide px-4 md:px-8">
+                                    <img
+                                        src={imageUrl(logo)}
+                                        alt="Client Logo"
+                                        className="h-12 md:h-16 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0"
+                                    />
+                                </div>
+                            ))}
+                            {logos.length === 0 && !loading && (
+                                <div className="text-slate-500 italic">No client logos available yet.</div>
+                            )}
+                        </div>
                     </div>
                 </ScrollReveal>
             </div>

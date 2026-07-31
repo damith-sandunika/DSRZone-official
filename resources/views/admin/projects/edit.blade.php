@@ -7,6 +7,15 @@
     <form action="{{ route('admin.projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="max-w-xl space-y-4">
         @csrf
         @method('PUT')
+        @if ($errors->any())
+            <div class="p-4 mb-4 text-sm text-red-400 bg-red-900/20 rounded-lg border border-red-500/30">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div>
             <label for="product_id" class="block text-sm text-gray-400 mb-1">Link to product (optional)</label>
             <select name="product_id" id="product_id" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
@@ -40,6 +49,16 @@
                 <img src="{{ $imgUrl }}" alt="" class="h-24 w-auto object-cover rounded border border-white/10 mb-2">
             @endif
             <input type="file" name="image" id="image" accept="image/*" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none file:mr-2 file:rounded file:border-0 file:bg-amber-500/20 file:px-3 file:py-1 file:text-amber-400">
+        </div>
+        <div>
+            <label for="logo" class="block text-sm text-gray-400 mb-1">Client Logo (optional)</label>
+            @php $logoUrl = $project->logo && str_starts_with($project->logo, 'projects/logos/') ? asset('storage/'.$project->logo) : null; @endphp
+            @if($logoUrl)
+                <p class="text-xs text-emerald-400 mb-1">Current logo:</p>
+                <img src="{{ $logoUrl }}" alt="" class="h-16 w-auto object-contain rounded border border-white/10 mb-2 bg-white/10 p-1">
+            @endif
+            <input type="file" name="logo" id="logo" accept="image/*" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none file:mr-2 file:rounded file:border-0 file:bg-amber-500/20 file:px-3 file:py-1 file:text-amber-400">
+            <p class="text-xs text-gray-500 mt-1">Max 5MB. JPEG, PNG, GIF, WebP, SVG. (Shows on frontend slider)</p>
         </div>
         <div>
             <label for="category" class="block text-sm text-gray-400 mb-1">Category</label>

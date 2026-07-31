@@ -15,7 +15,7 @@ function GoldenHero() {
     return (
         <section
             id="home"
-            className="relative min-h-screen text-white overflow-hidden flex flex-col lg:flex-row lg:justify-between px-6 sm:px-10 lg:px-16 pt-24 lg:pt-0 pb-0"
+            className="relative min-h-screen text-white overflow-hidden flex items-center pt-24 lg:pt-0 pb-0"
         >
             {/* ── Backgrounds ─────────────────────────────── */}
             {/* Desktop Background */}
@@ -49,8 +49,9 @@ function GoldenHero() {
             {/* Glow blobs */}
             <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[100px] pointer-events-none" />
 
-            {/* ── Left: Text (Title & Desc) ──────────────────────────────── */}
-            <div className="relative z-10 order-1 flex-1 flex flex-col items-center lg:items-start text-center lg:text-left justify-center lg:max-w-[50%] pt-10 lg:pt-0">
+            <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col lg:flex-row lg:justify-between relative z-10">
+                {/* ── Left: Text (Title & Desc) ──────────────────────────────── */}
+                <div className="relative z-10 order-1 flex-1 flex flex-col items-center lg:items-start text-center lg:text-left justify-center lg:max-w-[50%] pt-10 lg:pt-0">
 
                 <motion.h1
                     className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight"
@@ -117,7 +118,7 @@ function GoldenHero() {
                 transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
             >
                 {/* The Image Container aligned to bottom */}
-                <div className="relative w-full max-w-[450px] lg:max-w-[650px] z-10 flex items-end justify-center lg:justify-end">
+                <div className="relative w-full max-w-[400px] lg:max-w-[550px] z-10 flex items-end justify-center lg:justify-end">
                     
                     {/* Gold shine behind the person */}
                     <div
@@ -210,6 +211,8 @@ function GoldenHero() {
                         Get in Touch
                     </a>
                 </motion.div>
+            </div>
+            
             </div>
         </section>
     );

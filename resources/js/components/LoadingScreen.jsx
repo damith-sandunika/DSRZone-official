@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const CRITICAL_IMAGES = [
-    '/images/logo.png',
+    '/images/DSRZone logo.png',
     '/images/2.jpg',
     '/images/3.jpg',
     '/images/4.jpg',
@@ -91,8 +91,8 @@ export default function LoadingScreen({ onComplete }) {
                 {/* Center logo */}
                 <div className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-[#0f1116] border border-[#f59e0b]/30 flex items-center justify-center overflow-hidden">
                     <img
-                        src="/images/logo.png"
-                        alt=""
+                        src="/images/DSRZone logo.png"
+                        alt="DSRZone Logo"
                         className="w-full h-full object-contain p-1.5"
                     />
                 </div>
