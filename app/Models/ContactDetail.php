@@ -9,6 +9,8 @@ class ContactDetail extends Model
     protected $fillable = [
         'email',
         'phone',
+        'location',
+        'working_hours',
         'linkedin_url',
         'facebook_url',
         'twitter_url',

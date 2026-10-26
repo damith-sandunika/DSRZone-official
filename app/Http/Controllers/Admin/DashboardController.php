@@ -21,8 +21,11 @@ class DashboardController extends Controller
             'testimonials' => Testimonial::count(),
             'messages_unread' => ContactMessage::where('is_read', false)->count(),
         ];
-        $recentMessages = ContactMessage::latest()->take(5)->get();
 
-        return view('admin.dashboard', compact('stats', 'recentMessages'));
+        $recentMessages = ContactMessage::latest()->take(5)->get();
+        $recentProducts = Product::latest()->take(4)->get();
+        $recentProjects = Project::latest()->take(4)->get();
+
+        return view('admin.dashboard', compact('stats', 'recentMessages', 'recentProducts', 'recentProjects'));
     }
 }

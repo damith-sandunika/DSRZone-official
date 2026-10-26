@@ -1,159 +1,110 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchProducts } from '../api/products';
-import { imageUrl } from '../utils/imageUrl';
-
-const COMPANY_LOGO = '/images/logo.png';
-const ORBIT_RADIUS = 140;
+import React from 'react';
+import { motion } from 'framer-motion';
 
 function Hero() {
-    const [products, setProducts] = useState([]);
-    const [focusIndex, setFocusIndex] = useState(-1);
-    const [loading, setLoading] = useState(true);
-    const sectionRef = useRef(null);
-
-    useEffect(() => {
-        let cancelled = false;
-        (async () => {
-            const data = await fetchProducts();
-            if (!cancelled && Array.isArray(data)) setProducts(data);
-            setLoading(false);
-        })();
-        return () => { cancelled = true; };
-    }, []);
-
-    // Intro + for each product: see circle, then logo at main circle → 1 + 2*N steps
-    const totalSlides = 1 + Math.max(0, products.length) * 2;
-    const heroHeightVh = totalSlides * 100;
-
-    const updateFocus = useCallback(() => {
-        const section = sectionRef.current;
-        if (!section) return;
-        const rect = section.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const slideIndex = Math.floor(-rect.top / vh);
-        // Odd slide (1,3,5…) = product at main circle; even (0,2,4…) = show full orbit
-        const index = slideIndex % 2 === 1
-            ? Math.min(products.length - 1, (slideIndex - 1) / 2)
-            : -1;
-        setFocusIndex(index);
-    }, [products.length]);
-
-    useEffect(() => {
-        window.addEventListener('scroll', updateFocus, { passive: true });
-        updateFocus();
-        return () => window.removeEventListener('scroll', updateFocus);
-    }, [updateFocus]);
-
-    const focusedProduct = focusIndex >= 0 && focusIndex < products.length ? products[focusIndex] : null;
+    const stats = [
+        { value: '50+', label: 'Projects Delivered', highlight: true },
+        { value: '30+', label: 'Happy Clients' },
+        { value: '5+', label: 'Industries', highlight: true },
+        { value: '100%', label: 'Commitment' },
+    ];
 
     return (
         <section
             id="home"
-            ref={sectionRef}
-            className="relative"
-            style={{ height: `${heroHeightVh}vh` }}
+            className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#030712] pt-20 sm:pt-28 pb-10 sm:pb-16"
         >
-            {/* Background layer (no overflow here so sticky child can stick) */}
-            <div className="absolute inset-0 bg-[#0a0c12] overflow-hidden">
-                <div className="absolute inset-0 bg-[linear-gradient(160deg,transparent_40%,rgba(245,158,11,0.04)_100%)]" />
-                <div className="absolute top-0 right-0 w-[70%] h-[80%] bg-gradient-to-bl from-[#f59e0b]/08 via-transparent to-transparent rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-[50%] h-[60%] bg-[#f59e0b]/05 rounded-full blur-3xl" />
-            </div>
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] opacity-50 pointer-events-none" />
+            {/* Pure Background Video - Shifted right on mobile for perfect framing */}
+            <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster="/images/hero backgroudnd.png"
+                className="absolute inset-0 w-full h-full object-cover object-[75%_center] sm:object-center z-0 pointer-events-none opacity-100"
+            >
+                <source src="/images/DSRZone.mp4" type="video/mp4" />
+                <source src="/DSRZone.mp4" type="video/mp4" />
+            </video>
 
-            <div className="sticky top-0 h-screen w-full flex items-center">
-                <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12 lg:gap-16">
-                    {/* Left: intro text always visible (does not change on scroll) */}
-                    <div className="relative z-20 max-w-2xl order-2 lg:order-1">
-                        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#f59e0b] mb-6 animate-fade-in">
-                            IT & Graphic Solutions
-                        </p>
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.05] animate-fade-in-delay">
-                            We Create
-                            <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-[#fcd34d] via-[#f59e0b] to-[#d97706]">
-                                Digital & Visual Experiences
-                            </span>
-                        </h1>
-                        <p className="mt-6 text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl animate-fade-in-delay-2">
-                            Scroll to discover our systems.
-                        </p>
-                    </div>
+            {/* Subtle Left Side Black Shade to boost text contrast while keeping video pure */}
+            <div className="absolute inset-y-0 left-0 w-full md:w-3/5 lg:w-1/2 bg-gradient-to-r from-black/75 via-black/40 to-transparent z-10 pointer-events-none" />
 
-                    {/* Right: orbit (logos on circle) + main circle. When scroll: one logo smooth to center, others hide, show name+info */}
-                    <div className="relative flex items-center justify-center order-1 lg:order-2 shrink-0 min-h-[320px] lg:min-h-0 px-4">
-                        {/* Orbit: circle line + company logo (center) + planets. When focused: circle & sun & other planets hide; focused planet smooth to center */}
-                        <div
-                            className="hero-orbit-ring relative z-10"
-                            style={{ ['--orbit-radius']: `${ORBIT_RADIUS}px` }}
-                        >
-                            <div
-                                className={`hero-orbit-circle-line transition-opacity duration-500 ${focusedProduct ? 'opacity-0' : 'opacity-100'}`}
-                                aria-hidden={!!focusedProduct}
-                            />
-                            {/* Company logo (main circle) – hidden when a product logo is at center */}
-                            <div
-                                className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${focusedProduct ? 'opacity-0' : 'opacity-100'}`}
-                                aria-hidden={!!focusedProduct}
-                            >
-                                <div className="hero-main-circle w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden flex items-center justify-center p-3 z-10">
-                                    <img src={COMPANY_LOGO} alt="Company" className="w-full h-full object-contain" />
-                                </div>
-                            </div>
-                            {/* Planets on orbit – focused one smooths to center, others hide */}
-                            {!loading && products.length > 0 && products.map((product, i) => {
-                                const duration = 28;
-                                const delay = -((i / Math.max(1, products.length)) * duration);
-                                const isFocused = focusIndex === i;
-                                return (
-                                    <div
-                                        key={product.id}
-                                        className={`hero-planet ${isFocused ? 'hero-planet--focused' : ''}`}
-                                        style={{
-                                            ['--orbit-radius']: `${ORBIT_RADIUS}px`,
-                                            ['--orbit-duration']: `${duration}s`,
-                                            ['--orbit-delay']: `${delay}s`,
-                                            ...(focusedProduct && !isFocused ? { opacity: 0, pointerEvents: 'none' } : {}),
-                                        }}
-                                    >
-                                        <div className="hero-planet-inner">
-                                            {product.logo ? (
-                                                <img src={imageUrl(product.logo)} alt="" className="object-contain" />
-                                            ) : (
-                                                <span className="text-[#f59e0b] font-bold text-lg">{product.name?.slice(0, 1) || '?'}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
+            {/* Main Hero Container */}
+            <div className="relative z-20 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col justify-between min-h-[calc(100vh-5rem)]">
+                {/* Content slightly lifted upwards */}
+                <div className="flex-1 my-auto flex flex-col justify-center max-w-2xl -mt-6 sm:-mt-8">
+                    <motion.div
+                        initial={{ opacity: 0, y: 25 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                        className="flex flex-col items-start"
+                    >
+                        {/* Pre-title Tagline */}
+                        <div className="inline-block text-[11px] sm:text-xs font-bold tracking-[0.25em] text-blue-400 uppercase mb-3 sm:mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                            SOFTWARE DEVELOPMENT COMPANY
                         </div>
 
-                        {/* When a logo is at center: show only its name + short description next to orbit */}
-                        {focusedProduct && (
-                            <div
-                                key={focusIndex}
-                                className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 z-20 min-w-0 max-w-lg animate-fade-in"
-                                role="region"
-                                aria-live="polite"
+                        {/* Main Heading (REAL SOLUTIONS on next line) */}
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-black text-white tracking-tight leading-[1.15] mb-5 drop-shadow-[0_2px_15px_rgba(0,0,0,0.8)]">
+                            TURNING IDEAS INTO<br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1062FE] drop-shadow-[0_0_30px_rgba(56,189,248,0.5)]">
+                                REAL SOLUTIONS
+                            </span>
+                        </h1>
+
+                        {/* Description */}
+                        <p className="text-slate-200 text-xs sm:text-sm md:text-base max-w-lg font-normal leading-relaxed mb-6 sm:mb-7 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                            We design and develop custom software, web platforms and digital systems that help businesses grow, work smarter and achieve more.
+                        </p>
+
+                        {/* CTA Buttons - Single row on mobile with responsive compact sizing */}
+                        <div className="flex flex-row items-center gap-2.5 sm:gap-4 w-full sm:w-auto">
+                            <a
+                                href="#contact"
+                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#1062FE] hover:bg-[#0052E0] text-white font-bold text-xs sm:text-sm shadow-[0_8px_20px_rgba(16,98,254,0.4)] hover:shadow-[0_12px_28px_rgba(16,98,254,0.6)] hover:-translate-y-0.5 transition-all group whitespace-nowrap"
                             >
-                                <div className="text-center sm:text-left min-w-0 flex-1">
-                                    <h2 className="text-xl sm:text-2xl font-bold text-white">{focusedProduct.name}</h2>
-                                    {focusedProduct.desc && (
-                                        <p className="mt-2 text-gray-400 text-sm sm:text-base leading-relaxed">{focusedProduct.desc}</p>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                                <span>Start a Project</span>
+                                <span className="transition-transform group-hover:translate-x-1">&rarr;</span>
+                            </a>
+                            <a
+                                href="#portfolio"
+                                className="flex-1 sm:flex-initial inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-black/40 hover:bg-black/60 text-white font-semibold text-xs sm:text-sm border border-white/20 hover:border-white/40 backdrop-blur-sm transition-all whitespace-nowrap"
+                            >
+                                View Our Work
+                            </a>
+                        </div>
+                    </motion.div>
                 </div>
 
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-float">
-                    <a href="#about" className="flex flex-col items-center gap-2 text-gray-500 hover:text-[#f59e0b] transition-colors" aria-label="Scroll to about">
-                        <span className="text-xs font-medium uppercase tracking-widest">Scroll</span>
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                    </a>
-                </div>
+                {/* Bottom Stats Row - Centered alignment */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="pt-6 sm:pt-8 border-t border-white/15 mt-6 sm:mt-8"
+                >
+                    <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center sm:justify-start lg:justify-start gap-5 sm:gap-8 lg:gap-12 text-center sm:text-left">
+                        {stats.map((stat, idx) => (
+                            <React.Fragment key={stat.label}>
+                                <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+                                    <span className={`text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] ${
+                                        stat.highlight ? 'text-[#38bdf8]' : 'text-white'
+                                    }`}>
+                                        {stat.value}
+                                    </span>
+                                    <span className="text-[11px] sm:text-xs font-medium text-slate-300 mt-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                                        {stat.label}
+                                    </span>
+                                </div>
+                                {idx < stats.length - 1 && (
+                                    <div className="hidden sm:block h-8 w-[1px] bg-white/20" />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </motion.div>
             </div>
         </section>
     );

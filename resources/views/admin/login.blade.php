@@ -4,60 +4,70 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Admin Login – Sldigitasystem</title>
+    <title>Admin Sign In – DSRZone</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css'])
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-[#0a0c12] text-gray-200 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md rounded-2xl border border-white/10 bg-[#080a0f] shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div class="flex items-center gap-3 mb-6">
-                <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                </span>
-                <div>
-                    <h1 class="text-xl font-semibold text-white">Admin Login</h1>
-                    <p class="text-sm text-gray-400">Sldigitasystem</p>
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen flex items-center justify-center p-4 antialiased">
+    <div class="w-full max-w-md rounded-3xl border border-slate-200/80 bg-white/90 backdrop-blur-xl shadow-2xl shadow-blue-500/10 p-8 sm:p-10">
+        {{-- Brand Logo --}}
+        <div class="flex flex-col items-center text-center mb-8">
+            <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-xl shadow-blue-500/15 ring-4 ring-white mb-3.5 text-blue-600 border border-slate-100">
+                <img src="/images/DSRZone logo.png" alt="DSRZone Logo" class="w-11 h-11 object-contain" />
+            </div>
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">DSRZone Super Admin</h1>
+            <p class="text-xs font-semibold text-slate-500 mt-1">Sign in with your enterprise credentials to manage systems.</p>
+        </div>
+
+        @if($errors->any())
+            <div class="mb-6 rounded-2xl border border-red-200 bg-red-50/50 p-4 flex items-start gap-3">
+                <div class="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">!</div>
+                <div class="text-xs font-semibold text-red-700">
+                    @foreach($errors->all() as $e) <p>{{ $e }}</p> @endforeach
                 </div>
             </div>
-            @if($errors->any())
-                <div class="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 flex items-start gap-3">
-                    <svg class="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <div class="text-sm text-red-300">
-                        @foreach($errors->all() as $e) <p>{{ $e }}</p> @endforeach
-                    </div>
-                </div>
-            @endif
-            <form method="POST" action="{{ url('admin/login') }}" class="space-y-4">
-                @csrf
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-400 mb-1.5">Email</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
-                        </span>
-                        <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
-                            class="w-full rounded-xl border border-white/10 bg-white/5 pl-10 pr-4 py-2.5 text-white placeholder-gray-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 focus:outline-none transition">
-                    </div>
-                </div>
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-400 mb-1.5">Password</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        </span>
-                        <input type="password" name="password" id="password" required
-                            class="w-full rounded-xl border border-white/10 bg-white/5 pl-10 pr-4 py-2.5 text-white placeholder-gray-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 focus:outline-none transition">
-                    </div>
-                </div>
-                <label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
-                    <input type="checkbox" name="remember" class="rounded border-white/20 bg-white/5 text-amber-500 focus:ring-amber-500">
-                    Remember me
+        @endif
+
+        <form method="POST" action="{{ url('admin/login') }}" class="space-y-4">
+            @csrf
+
+            <div>
+                <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                <input type="email" name="email" id="email" value="{{ old('email', 'admin@example.com') }}" required autofocus
+                    placeholder="admin@dsrzone.com"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all">
+            </div>
+
+            <div>
+                <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                <input type="password" name="password" id="password" required
+                    placeholder="••••••••"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all">
+            </div>
+
+            <div class="flex items-center justify-between text-xs pt-1">
+                <label class="flex items-center gap-2 cursor-pointer text-slate-600 font-semibold">
+                    <input type="checkbox" name="remember" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300">
+                    <span>Remember this device</span>
                 </label>
-                <button type="submit" class="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 text-black font-semibold py-3 hover:bg-amber-400 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                    Sign in
-                </button>
-            </form>
+            </div>
+
+            <button type="submit" class="w-full mt-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-xs uppercase tracking-wider shadow-lg shadow-blue-500/25 transition-all">
+                <span>Sign in to Dashboard</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+            <a href="{{ url('/') }}" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <span>Back to DSRZone Website</span>
+            </a>
         </div>
     </div>
 </body>

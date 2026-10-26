@@ -1,145 +1,110 @@
 @extends('admin.layout')
 
-@section('title', 'Edit Project')
+@section('title', 'Edit ' . $project->title)
 
 @section('content')
-    <h1 class="text-2xl font-semibold text-amber-400 mb-6">Edit Project</h1>
-    <form action="{{ route('admin.projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="max-w-xl space-y-4">
-        @csrf
-        @method('PUT')
-        @if ($errors->any())
-            <div class="p-4 mb-4 text-sm text-red-400 bg-red-900/20 rounded-lg border border-red-500/30">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        <div>
-            <label for="product_id" class="block text-sm text-gray-400 mb-1">Link to product (optional)</label>
-            <select name="product_id" id="product_id" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-                <option value="">— None —</option>
-                @foreach(\App\Models\Product::orderBy('name')->get() as $prod)
-                    <option value="{{ $prod->id }}" {{ old('product_id', $project->product_id) == $prod->id ? 'selected' : '' }}>{{ $prod->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label for="title" class="block text-sm text-gray-400 mb-1">Title</label>
-            <input type="text" name="title" id="title" value="{{ old('title', $project->title) }}" required class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <div>
-            <label for="description" class="block text-sm text-gray-400 mb-1">Description</label>
-            <textarea name="description" id="description" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('description', $project->description) }}</textarea>
-        </div>
-        <div>
-            <label for="problem" class="block text-sm text-gray-400 mb-1">Problem / Challenge faced</label>
-            <textarea name="problem" id="problem" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('problem', $project->problem) }}</textarea>
-        </div>
-        <div>
-            <label for="solution" class="block text-sm text-gray-400 mb-1">Our Solution</label>
-            <textarea name="solution" id="solution" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('solution', $project->solution) }}</textarea>
-        </div>
-        <div>
-            <label for="image" class="block text-sm text-gray-400 mb-1">Image (optional)</label>
-            @php $imgUrl = $project->image && str_starts_with($project->image, 'projects/') ? asset('storage/'.$project->image) : null; @endphp
-            @if($imgUrl)
-                <p class="text-xs text-emerald-400 mb-1">Current image:</p>
-                <img src="{{ $imgUrl }}" alt="" class="h-24 w-auto object-cover rounded border border-white/10 mb-2">
-            @endif
-            <input type="file" name="image" id="image" accept="image/*" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none file:mr-2 file:rounded file:border-0 file:bg-amber-500/20 file:px-3 file:py-1 file:text-amber-400">
-        </div>
-        <div>
-            <label for="logo" class="block text-sm text-gray-400 mb-1">Client Logo (optional)</label>
-            @php $logoUrl = $project->logo && str_starts_with($project->logo, 'projects/logos/') ? asset('storage/'.$project->logo) : null; @endphp
-            @if($logoUrl)
-                <p class="text-xs text-emerald-400 mb-1">Current logo:</p>
-                <img src="{{ $logoUrl }}" alt="" class="h-16 w-auto object-contain rounded border border-white/10 mb-2 bg-white/10 p-1">
-            @endif
-            <input type="file" name="logo" id="logo" accept="image/*" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none file:mr-2 file:rounded file:border-0 file:bg-amber-500/20 file:px-3 file:py-1 file:text-amber-400">
-            <p class="text-xs text-gray-500 mt-1">Max 5MB. JPEG, PNG, GIF, WebP, SVG. (Shows on frontend slider)</p>
-        </div>
-        <div>
-            <label for="category" class="block text-sm text-gray-400 mb-1">Category</label>
-            <input type="text" name="category" id="category" value="{{ old('category', $project->category) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <div>
-            <label for="client" class="block text-sm text-gray-400 mb-1">Client</label>
-            <input type="text" name="client" id="client" value="{{ old('client', $project->client) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <div>
-            <label for="project_date" class="block text-sm text-gray-400 mb-1">Project date</label>
-            <input type="date" name="project_date" id="project_date" value="{{ old('project_date', $project->project_date?->format('Y-m-d')) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <div>
-            <label for="project_url" class="block text-sm text-gray-400 mb-1">Project URL</label>
-            <input type="url" name="project_url" id="project_url" value="{{ old('project_url', $project->project_url) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <div>
-            <label class="block text-sm text-gray-400 mb-1">Technologies (one per line)</label>
-            <textarea name="technologies_text" id="technologies_text" rows="3" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('technologies_text', is_array($project->technologies) ? implode("\n", $project->technologies) : '') }}</textarea>
-        </div>
-        <div>
-            <label for="order" class="block text-sm text-gray-400 mb-1">Order</label>
-            <input type="number" name="order" id="order" value="{{ old('order', $project->order) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
+    @include('admin._page_header', [
+        'title' => 'Edit Project: ' . $project->title,
+        'subtitle' => 'Modify ' . $project->title . ' case study, screenshots, technologies, and live URLs.',
+        'actions' => '<a href="' . route('admin.projects.index') . '" class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg> Back to Projects</a>'
+    ])
 
-        {{-- ── Map Location Picker ── --}}
-        <div>
-            <label class="block text-sm text-gray-400 mb-2">📍 Map Location (click on map to move pin)</label>
-            <div class="relative inline-block border border-amber-500/30 rounded overflow-hidden cursor-crosshair" style="max-width:320px;width:100%">
-                <img id="map-picker-img" src="/images/sri lanka Map.png" alt="Sri Lanka Map"
-                     style="width:100%;display:block;background:#06090f;filter:drop-shadow(0 0 8px rgba(59,130,246,0.4))">
-                <div id="map-pin" style="display:none;position:absolute;width:14px;height:14px;border-radius:50%;background:#3b82f6;border:2px solid #93c5fd;box-shadow:0 0 10px rgba(59,130,246,0.8);transform:translate(-50%,-50%);pointer-events:none"></div>
+    @php $media = app(\App\Services\MediaService::class); @endphp
+
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-6 lg:p-8 shadow-sm max-w-4xl">
+        <form action="{{ route('admin.projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label for="title" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Title *</label>
+                    <input type="text" name="title" id="title" value="{{ old('title', $project->title) }}" required class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="product_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Related Product</label>
+                    <select name="product_id" id="product_id" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none">
+                        <option value="">None / Independent Project</option>
+                        @foreach(\App\Models\Product::orderBy('name')->get() as $prod)
+                            <option value="{{ $prod->id }}" {{ old('product_id', $project->product_id) == $prod->id ? 'selected' : '' }}>{{ $prod->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-            <p class="text-xs text-gray-500 mt-1" id="map-coords-label">No location selected</p>
-            <input type="hidden" name="map_x" id="map_x" value="{{ old('map_x', $project->map_x) }}">
-            <input type="hidden" name="map_y" id="map_y" value="{{ old('map_y', $project->map_y) }}">
-            <div class="mt-2">
-                <label for="map_city" class="block text-xs text-gray-400 mb-1">City / Location name</label>
-                <input type="text" name="map_city" id="map_city" value="{{ old('map_city', $project->map_city) }}"
-                       placeholder="e.g. Colombo"
-                       class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white text-sm focus:border-amber-500 focus:outline-none">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label for="client" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Client Name / Business</label>
+                    <input type="text" name="client" id="client" value="{{ old('client', $project->client) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="category" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Category</label>
+                    <input type="text" name="category" id="category" value="{{ old('category', $project->category) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+                </div>
             </div>
-        </div>
-        <script>
-            (function(){
-                const img = document.getElementById('map-picker-img');
-                const pin = document.getElementById('map-pin');
-                const xIn = document.getElementById('map_x');
-                const yIn = document.getElementById('map_y');
-                const lbl = document.getElementById('map-coords-label');
-                function setPin(x, y) {
-                    pin.style.display = 'block';
-                    pin.style.left = x + '%';
-                    pin.style.top  = y + '%';
-                    xIn.value = x.toFixed(2);
-                    yIn.value = y.toFixed(2);
-                    lbl.textContent = 'Location set: ' + x.toFixed(1) + '%, ' + y.toFixed(1) + '%';
-                    lbl.style.color = '#60a5fa';
-                }
-                img.parentElement.addEventListener('click', function(e){
-                    const r = img.getBoundingClientRect();
-                    setPin((e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 100);
-                });
-                const ox = xIn.value, oy = yIn.value;
-                if(ox && oy) setPin(parseFloat(ox), parseFloat(oy));
-            })();
-        </script>
-        <label class="flex items-center gap-2 text-sm text-gray-400">
-            <input type="hidden" name="is_featured" value="0">
-            <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $project->is_featured) ? 'checked' : '' }} class="rounded border-amber-500/50 text-amber-500 focus:ring-amber-500">
-            Featured
-        </label>
-        <label class="flex items-center gap-2 text-sm text-gray-400">
-            <input type="hidden" name="is_active" value="0">
-            <input type="checkbox" name="is_active" value="1" {{ old('is_active', $project->is_active) ? 'checked' : '' }} class="rounded border-amber-500/50 text-amber-500 focus:ring-amber-500">
-            Active
-        </label>
-        <div class="flex gap-2">
-            <button type="submit" class="rounded bg-amber-500 text-black font-medium px-4 py-2 hover:bg-amber-400 transition">Update</button>
-            <a href="{{ route('admin.projects.index') }}" class="rounded border border-amber-500/30 px-4 py-2 hover:bg-white/5 transition">Cancel</a>
-        </div>
-    </form>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label for="problem" class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-1.5">The Problem Faced</label>
+                    <textarea name="problem" id="problem" rows="3" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">{{ old('problem', $project->problem) }}</textarea>
+                </div>
+                <div>
+                    <label for="solution" class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1.5">Our Engineered Solution</label>
+                    <textarea name="solution" id="solution" rows="3" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">{{ old('solution', $project->solution) }}</textarea>
+                </div>
+            </div>
+
+            <div>
+                <label for="technologies_text" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Technologies (comma-separated)</label>
+                <input type="text" name="technologies_text" id="technologies_text" value="{{ old('technologies_text', is_array($project->technologies) ? implode(', ', $project->technologies) : '') }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-slate-100">
+                <div>
+                    <label for="image" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Cover Image</label>
+                    @if($project->image)
+                        <div class="mb-2">
+                            <img src="{{ $media->url($project->image) }}" alt="Current Image" class="h-16 w-32 object-cover rounded-xl border border-slate-200">
+                        </div>
+                    @endif
+                    <input type="file" name="image" id="image" accept="image/*" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2 text-xs text-slate-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-bold">
+                </div>
+                <div>
+                    <label for="logo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Logo</label>
+                    @if($project->logo)
+                        <div class="mb-2">
+                            <img src="{{ $media->url($project->logo) }}" alt="Current Logo" class="h-12 w-12 object-contain rounded-xl border border-slate-200 p-1">
+                        </div>
+                    @endif
+                    <input type="file" name="logo" id="logo" accept="image/*" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2 text-xs text-slate-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-bold">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-slate-100">
+                <div>
+                    <label for="map_city" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Map City Label</label>
+                    <input type="text" name="map_city" id="map_city" value="{{ old('map_city', $project->map_city) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label for="order" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Display Order</label>
+                    <input type="number" name="order" id="order" value="{{ old('order', $project->order) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none">
+                </div>
+                <div class="flex items-center gap-6 pt-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $project->is_featured) ? 'checked' : '' }} class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Featured</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', $project->is_active) ? 'checked' : '' }} class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Active</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+                <a href="{{ route('admin.projects.index') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all">Update Project</button>
+            </div>
+        </form>
+    </div>
 @endsection

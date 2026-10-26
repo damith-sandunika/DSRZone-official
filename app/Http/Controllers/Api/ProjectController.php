@@ -3,65 +3,52 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProjectController extends Controller
 {
-    public function index(): JsonResponse
+    /**
+     * List active projects. Supports optional ?limit= query parameter.
+     */
+    public function index(Request $request): JsonResponse
     {
-        $projects = Project::with('product:id,name,slug')
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->orderBy('id', 'desc')
-            ->get();
+        $limit = $request->query('limit');
+        $cacheKey = $limit ? "api_projects_list_limit_{$limit}" : 'api_projects_list';
 
-        return response()->json($projects->map(fn ($p) => $this->formatProject($p)));
+        $projects = Cache::remember($cacheKey, 3600, function () use ($limit) {
+            $query = Project::with('product:id,name,slug')
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->orderBy('id', 'desc');
+
+            if ($limit && is_numeric($limit)) {
+                $query->limit((int) $limit);
+            }
+
+            return $query->get();
+        });
+
+        return response()->json(ProjectResource::collection($projects));
     }
 
+    /**
+     * List active featured projects.
+     */
     public function featured(): JsonResponse
     {
-        $projects = Project::with('product:id,name,slug')
-            ->where('is_active', true)
-            ->where('is_featured', true)
-            ->orderBy('order')
-            ->orderBy('id', 'desc')
-            ->get();
+        $projects = Cache::remember('api_projects_featured', 3600, function () {
+            return Project::with('product:id,name,slug')
+                ->where('is_active', true)
+                ->where('is_featured', true)
+                ->orderBy('order')
+                ->orderBy('id', 'desc')
+                ->get();
+        });
 
-        return response()->json($projects->map(fn ($p) => $this->formatProject($p)));
-    }
-
-    private function formatProject(Project $p): array
-    {
-        return [
-            'id' => $p->id,
-            'product_id' => $p->product_id,
-            'product' => $p->product ? ['id' => $p->product->id, 'name' => $p->product->name, 'slug' => $p->product->slug] : null,
-            'title' => $p->title,
-            'description' => $p->description,
-            'problem' => $p->problem,
-            'solution' => $p->solution,
-            'image' => $this->normalizeImagePath($p->image),
-            'logo' => $this->normalizeImagePath($p->logo),
-            'category' => $p->category,
-            'client' => $p->client,
-            'project_date' => $p->project_date?->format('Y-m-d'),
-            'project_url' => $p->project_url,
-            'technologies' => $p->technologies ?? [],
-            'map_x' => $p->map_x,
-            'map_y' => $p->map_y,
-            'map_city' => $p->map_city,
-        ];
-    }
-
-    private function normalizeImagePath(?string $value): ?string
-    {
-        if ($value === null || $value === '') return null;
-        $value = trim($value);
-        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) return $value;
-        if (preg_match('#^(products|projects|services)/#', $value)) return URL::asset('storage/' . $value);
-        return URL::to(str_starts_with($value, '/') ? $value : '/images/' . ltrim($value, '/'));
+        return response()->json(ProjectResource::collection($projects));
     }
 }
-

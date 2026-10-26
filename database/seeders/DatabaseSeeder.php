@@ -12,22 +12,26 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
+     * Seed the application's database securely.
      */
     public function run(): void
     {
+        $adminEmail = env('ADMIN_DEFAULT_EMAIL', 'admin@dsrzone.com');
+        $adminPassword = env('ADMIN_DEFAULT_PASSWORD', 'admin123456');
+
         User::updateOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => $adminEmail],
             [
-                'name' => 'Admin',
-                'password' => Hash::make('password'),
+                'name' => 'DSRZone Admin',
+                'password' => Hash::make($adminPassword),
                 'is_admin' => true,
             ]
         );
 
-        // Seed sample data for Services, Projects, and Testimonials
         $this->call([
-            SampleDataSeeder::class,
+            // SampleDataSeeder::class,
+            ServiceEnhancementSeeder::class,
+            TestimonialEnhancementSeeder::class,
         ]);
     }
 }

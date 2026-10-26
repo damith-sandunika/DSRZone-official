@@ -1,114 +1,155 @@
-import React, { useState, useEffect } from 'react';
-import axios from '../config/axios';
-import ScrollReveal from './ScrollReveal';
-import { imageUrl } from '../utils/imageUrl';
-
-const stats = [
-    { value: '100+', label: 'Projects Delivered' },
-    { value: '50+', label: 'Happy Clients' },
-    { value: '10+', label: 'Years Experience' },
-    { value: '24/7', label: 'Support' },
-];
+import React from 'react';
+import { motion } from 'framer-motion';
 
 function About() {
-    const [logos, setLogos] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        axios.get('/api/v1/projects')
-            .then(res => {
-                const projectsWithLogos = res.data.filter(p => p.logo);
-                setLogos(projectsWithLogos.map(p => p.logo));
-            })
-            .catch(err => console.error(err))
-            .finally(() => setLoading(false));
-    }, []);
+    const stats = [
+        {
+            value: '50+',
+            label: 'Projects Delivered',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            )
+        },
+        {
+            value: '30+',
+            label: 'Happy Clients',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            )
+        },
+        {
+            value: '5+',
+            label: 'Industries Served',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+            )
+        },
+        {
+            value: '100%',
+            label: 'Commitment to Quality',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            )
+        }
+    ];
 
     return (
-        <section id="about" className="py-20 bg-[#030610] border-t border-white/5 relative overflow-hidden">
-            {/* Background cyber accents */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-blue-600/5 blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-blue-400/5 blur-[80px] pointer-events-none" />
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.6) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <section id="about" className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-24 bg-white">
+            {/* 100% Matching Split-Screen Background Asset */}
+            <div 
+                className="absolute inset-0 w-full h-full bg-cover bg-center pointer-events-none z-0"
+                style={{ backgroundImage: "url('/images/about_bg.jpg')" }}
+            />
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <ScrollReveal>
-                    <div className="text-center mb-12 sm:mb-16">
-                        <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-blue-400/90 mb-3">About Us</p>
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-300">IT & Graphic Solutions</span>
+            {/* Mobile / Tablet fallback gradient helper */}
+            <div className="absolute inset-0 bg-white/70 lg:hidden pointer-events-none z-0" />
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center">
+                    
+                    {/* Left Column: Founder Bio, Headline, Signature & Button */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-4"
+                    >
+                        {/* Section Tag */}
+                        <div className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.25em] text-[#1062FE] mb-3">
+                            <span className="w-6 h-[2px] bg-[#1062FE]" />
+                            <span>ABOUT US</span>
+                        </div>
+
+                        {/* Title matching screenshot */}
+                        <h2 className="text-3xl sm:text-4xl lg:text-[45px] font-black text-slate-900 tracking-tight leading-[1.12] mb-5">
+                            Turning Ideas<br />
+                            Into <span className="text-[#1062FE]">Real<br />Solutions</span>
                         </h2>
-                    </div>
-                </ScrollReveal>
 
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-                    <ScrollReveal delay={50}>
-                        <div className="bg-[#0a0c12]/60 backdrop-blur-md border border-white/5 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl transition-opacity opacity-0 group-hover:opacity-100" />
-                            
-                            <h3 className="text-lg sm:text-xl font-bold text-white mb-5 flex items-center gap-3">
-                                <span className="w-8 h-px bg-blue-500/50" />
-                                Who We Are
-                            </h3>
-                            <div className="space-y-4 text-slate-400 text-sm sm:text-sm leading-relaxed">
-                                <p>
-                                    DSRZone delivers <span className="text-blue-300 font-medium">IT and graphic solutions</span> that combine
-                                    cutting-edge software development with strong visual identity. We help brands and businesses
-                                    grow with custom software, branding, and dynamic designs.
-                                </p>
-                                <p>
-                                    From web and mobile applications to modern logos, brochures, and digital marketing assets,
-                                    we bring both technical and creative expertise under one roof.
-                                </p>
-                                <p>
-                                    We work closely with startups and enterprises to build highly scalable products and visually stunning graphics that
-                                    truly stand out and perform in the real world.
-                                </p>
+                        {/* Paragraph description */}
+                        <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 max-w-md font-normal">
+                            Hi, I'm Damith Sandunika, the founder of DSRZone. We are a software development company focused on building modern web platforms, digital systems and custom software solutions that help businesses grow, work smarter and achieve more.
+                        </p>
+
+                        {/* Signature & Designation */}
+                        <div className="mb-7">
+                            <div className="font-['Caveat',cursive] text-3xl sm:text-4xl text-slate-900 -rotate-2 select-none tracking-wide">
+                                Damith Sandunika
+                            </div>
+                            <div className="mt-1">
+                                <p className="text-xs font-bold text-slate-900">Founder & CEO</p>
+                                <p className="text-[11px] font-semibold text-slate-500">DSRZone</p>
                             </div>
                         </div>
-                    </ScrollReveal>
-                    
-                    <ScrollReveal delay={100}>
-                        <div className="grid grid-cols-2 gap-3 sm:gap-5">
-                            {stats.map((stat) => (
-                                <div
-                                    key={stat.label}
-                                    className="flex flex-col items-center justify-center p-5 sm:p-6 rounded-2xl bg-[#0a0c12]/80 border border-blue-500/10 backdrop-blur-md relative overflow-hidden group hover:border-blue-500/40 hover:-translate-y-1 transition-all duration-300 shadow-xl"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    
-                                    <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200 mb-1 drop-shadow-sm">
-                                        {stat.value}
-                                    </div>
-                                    <div className="text-[9px] sm:text-[10px] text-blue-400/70 font-semibold uppercase tracking-widest text-center mt-1">
-                                        {stat.label}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </ScrollReveal>
-                </div>
 
-                {/* Temporary Client Logos Strip */}
-                <ScrollReveal delay={200}>
-                    <div className="mt-20 pt-10 border-t border-white/5 overflow-hidden relative">
-                        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
-                            {/* Duplicate list exactly ONCE to make -50% translation seamless */}
-                            {[...logos, ...logos].map((logo, i) => (
-                                <div key={i} className="logo-slide px-4 md:px-8">
-                                    <img
-                                        src={imageUrl(logo)}
-                                        alt="Client Logo"
-                                        className="h-12 md:h-16 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0"
-                                    />
+                        {/* Button */}
+                        <a
+                            href="#contact"
+                            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#1062FE] hover:bg-[#0052E0] text-white font-bold text-sm shadow-[0_8px_20px_rgba(16,98,254,0.35)] hover:shadow-[0_12px_28px_rgba(16,98,254,0.5)] hover:-translate-y-0.5 transition-all group"
+                        >
+                            <span>More About Us</span>
+                            <span className="transition-transform group-hover:translate-x-1">&rarr;</span>
+                        </a>
+                    </motion.div>
+
+                    {/* Center Column: Founder Cutout Image seamlessly placed on the arched glass */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="lg:col-span-4 flex items-end justify-center relative -mb-6 lg:-mb-12"
+                    >
+                        <img
+                            src="/images/DamithSandunika.png"
+                            alt="Damith Sandunika - Founder & CEO of DSRZone"
+                            className="w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[460px] h-auto object-contain mx-auto drop-shadow-[0_25px_35px_rgba(0,0,0,0.35)] select-none"
+                        />
+                    </motion.div>
+
+                    {/* Right Column: 4 Stat Cards in Deep Blue Background */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                        className="lg:col-span-3 bg-[#03215c]/90 lg:bg-transparent rounded-3xl lg:rounded-none p-6 sm:p-8 lg:p-0 flex flex-col justify-center"
+                    >
+                        <div className="flex flex-col space-y-6">
+                            {stats.map((s, idx) => (
+                                <div
+                                    key={s.label}
+                                    className={`flex items-center gap-4 ${
+                                        idx < stats.length - 1 ? 'pb-6 border-b border-blue-400/20' : ''
+                                    }`}
+                                >
+                                    {/* Glowing Rounded Squircle Icon Badge */}
+                                    <div className="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-[#0052e0] to-[#0080ff] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(0,82,224,0.45)] ring-1 ring-white/20 shrink-0">
+                                        {s.icon}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+                                            {s.value}
+                                        </span>
+                                        <span className="text-xs sm:text-sm font-medium text-blue-100/90 mt-0.5 leading-snug">
+                                            {s.label}
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
-                            {logos.length === 0 && !loading && (
-                                <div className="text-slate-500 italic">No client logos available yet.</div>
-                            )}
                         </div>
-                    </div>
-                </ScrollReveal>
+                    </motion.div>
+
+                </div>
             </div>
         </section>
     );

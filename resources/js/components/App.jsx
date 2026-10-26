@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
-import GoldenHero from './GoldenHero';
+import Hero from './Hero';
 import About from './About';
 import Services from './Services';
 import Products from './Products';
@@ -19,7 +19,7 @@ function HomePage() {
         <>
             <Navbar />
             <main>
-                <GoldenHero />
+                <Hero />
                 <About />
                 <Services />
                 <Products />

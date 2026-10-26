@@ -3,23 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ContactDetailResource;
 use App\Models\ContactDetail;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class ContactDetailController extends Controller
 {
     /**
-     * Return contact details for the Contact Us section (email, phone, social, WhatsApp).
+     * Return contact details with caching.
      */
     public function index(): JsonResponse
     {
-        $contact = ContactDetail::get();
-        return response()->json([
-            'email' => $contact->email,
-            'phone' => $contact->phone,
-            'linkedin_url' => $contact->linkedin_url,
-            'facebook_url' => $contact->facebook_url,
-            'whatsapp' => $contact->whatsapp,
-        ]);
+        $contact = Cache::remember('api_contact_details', 3600, function () {
+            return ContactDetail::get();
+        });
+
+        return response()->json(new ContactDetailResource($contact));
     }
 }

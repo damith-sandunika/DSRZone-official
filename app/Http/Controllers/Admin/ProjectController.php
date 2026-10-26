@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Project\CreateProjectAction;
+use App\Actions\Project\DeleteProjectAction;
+use App\Actions\Project\UpdateProjectAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProjectFormRequest;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
     public function index(): View
     {
-        $projects = Project::orderBy('order')->orderBy('id')->get();
+        $projects = Project::with('product:id,name')->orderBy('order')->orderBy('id', 'desc')->paginate(15);
         return view('admin.projects.index', compact('projects'));
     }
 
@@ -22,15 +24,16 @@ class ProjectController extends Controller
         return view('admin.projects.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ProjectFormRequest $request, CreateProjectAction $action): RedirectResponse
     {
-        $data = $this->validated($request);
-        $data['is_featured'] = $request->boolean('is_featured');
-        $data['is_active'] = $request->boolean('is_active');
-        $data['image'] = $this->handleImage($request, null);
-        $data['logo'] = $this->handleLogo($request, null);
-        Project::create($data);
-        return redirect()->route('admin.projects.index')->with('success', 'Project created.');
+        $action->execute($request, $request->validated());
+        return redirect()->route('admin.projects.index')->with('success', 'Project created successfully.');
+    }
+
+    public function show(Project $project): View
+    {
+        $project->load('product');
+        return view('admin.projects.show', compact('project'));
     }
 
     public function edit(Project $project): View
@@ -38,76 +41,15 @@ class ProjectController extends Controller
         return view('admin.projects.edit', compact('project'));
     }
 
-    public function update(Request $request, Project $project): RedirectResponse
+    public function update(ProjectFormRequest $request, Project $project, UpdateProjectAction $action): RedirectResponse
     {
-        $data = $this->validated($request);
-        $data['is_featured'] = $request->boolean('is_featured');
-        $data['is_active'] = $request->boolean('is_active');
-        $data['image'] = $this->handleImage($request, $project->image);
-        $data['logo'] = $this->handleLogo($request, $project->logo);
-        $project->update($data);
-        return redirect()->route('admin.projects.index')->with('success', 'Project updated.');
+        $action->execute($request, $project, $request->validated());
+        return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
     }
 
-    public function destroy(Project $project): RedirectResponse
+    public function destroy(Project $project, DeleteProjectAction $action): RedirectResponse
     {
-        $project->delete();
-        return redirect()->route('admin.projects.index')->with('success', 'Project deleted.');
-    }
-
-    private function validated(Request $request): array
-    {
-        $data = $request->validate([
-            'product_id' => 'nullable|exists:products,id',
-            'title' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
-            'description' => 'nullable|string',
-            'problem' => 'nullable|string',
-            'solution' => 'nullable|string',
-            'category' => 'nullable|string|max:100',
-            'client' => 'nullable|string|max:255',
-            'project_date' => 'nullable|date',
-            'project_url' => 'nullable|string|max:500',
-            'technologies' => 'nullable|array',
-            'technologies.*' => 'string|max:100',
-            'technologies_text' => 'nullable|string',
-            'order' => 'nullable|integer',
-            'map_x' => 'nullable|numeric|min:0|max:100',
-            'map_y' => 'nullable|numeric|min:0|max:100',
-            'map_city' => 'nullable|string|max:100',
-        ]);
-        $data['order'] = $data['order'] ?? 0;
-        $data['technologies'] = $this->parseTechnologies($request);
-        unset($data['technologies_text']);
-        return $data;
-    }
-
-    private function handleImage(Request $request, ?string $current): ?string
-    {
-        if (!$request->hasFile('image')) {
-            return $current ? trim($current) : null;
-        }
-        $request->validate(['image' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120']);
-        $path = $request->file('image')->store('projects', 'public');
-        return $path ?: $current;
-    }
-
-    private function handleLogo(Request $request, ?string $current): ?string
-    {
-        if (!$request->hasFile('logo')) {
-            return $current ? trim($current) : null;
-        }
-        $request->validate(['logo' => 'image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120']);
-        $path = $request->file('logo')->store('projects/logos', 'public');
-        return $path ?: $current;
-    }
-
-    private function parseTechnologies(Request $request): array
-    {
-        if ($request->filled('technologies_text')) {
-            $lines = preg_split('/\r\n|\r|\n/', $request->input('technologies_text'));
-            return array_values(array_filter(array_map('trim', $lines)));
-        }
-        return array_values(array_filter($request->input('technologies', [])));
+        $action->execute($project);
+        return redirect()->route('admin.projects.index')->with('success', 'Project and its media deleted successfully.');
     }
 }

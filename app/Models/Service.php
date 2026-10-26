@@ -11,7 +11,9 @@ class Service extends Model
 
     protected $fillable = [
         'title',
+        'subtitle',
         'description',
+        'features',
         'icon',
         'image',
         'order',
@@ -20,6 +22,7 @@ class Service extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'features' => 'array',
     ];
 }
 

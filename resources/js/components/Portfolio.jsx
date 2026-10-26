@@ -205,8 +205,8 @@ function Portfolio() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('/api/v1/projects')
-            .then((res) => setProjects(res.data))
+        axios.get('/api/v1/projects?limit=6')
+            .then((res) => setProjects(Array.isArray(res.data) ? res.data : []))
             .catch(() => setProjects([]))
             .finally(() => setLoading(false));
     }, []);

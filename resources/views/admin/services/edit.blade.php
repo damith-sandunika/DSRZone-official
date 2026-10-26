@@ -1,41 +1,110 @@
 @extends('admin.layout')
 
-@section('title', 'Edit Service')
+@section('title', 'Edit ' . $service->title)
 
 @section('content')
-    <h1 class="text-2xl font-semibold text-amber-400 mb-6">Edit Service</h1>
-    <form action="{{ route('admin.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="max-w-xl space-y-4">
-        @csrf
-        @method('PUT')
-        <div>
-            <label for="title" class="block text-sm text-gray-400 mb-1">Title</label>
-            <input type="text" name="title" id="title" value="{{ old('title', $service->title) }}" required class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <div>
-            <label for="description" class="block text-sm text-gray-400 mb-1">Description</label>
-            <textarea name="description" id="description" rows="4" required class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">{{ old('description', $service->description) }}</textarea>
-        </div>
-        <div>
-            <label for="image" class="block text-sm text-gray-400 mb-1">Image (optional)</label>
-            @php $imgUrl = $service->image && str_starts_with($service->image, 'services/') ? asset('storage/'.$service->image) : null; @endphp
-            @if($imgUrl)
-                <p class="text-xs text-emerald-400 mb-1">Current:</p>
-                <img src="{{ $imgUrl }}" alt="" class="h-20 w-auto object-cover rounded border border-white/10 mb-2">
-            @endif
-            <input type="file" name="image" id="image" accept="image/*" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none file:mr-2 file:rounded file:border-0 file:bg-amber-500/20 file:px-3 file:py-1 file:text-amber-400">
-        </div>
-        <div>
-            <label for="order" class="block text-sm text-gray-400 mb-1">Order</label>
-            <input type="number" name="order" id="order" value="{{ old('order', $service->order) }}" class="w-full rounded border border-amber-500/30 bg-white/5 px-3 py-2 text-white focus:border-amber-500 focus:outline-none">
-        </div>
-        <label class="flex items-center gap-2 text-sm text-gray-400">
-            <input type="hidden" name="is_active" value="0">
-            <input type="checkbox" name="is_active" value="1" {{ old('is_active', $service->is_active) ? 'checked' : '' }} class="rounded border-amber-500/50 text-amber-500 focus:ring-amber-500">
-            Active
-        </label>
-        <div class="flex gap-2">
-            <button type="submit" class="rounded bg-amber-500 text-black font-medium px-4 py-2 hover:bg-amber-400 transition">Update</button>
-            <a href="{{ route('admin.services.index') }}" class="rounded border border-amber-500/30 px-4 py-2 hover:bg-white/5 transition">Cancel</a>
-        </div>
-    </form>
+    @include('admin._page_header', [
+        'title' => 'Edit Service: ' . $service->title,
+        'subtitle' => 'Modify ' . $service->title . ' specifications, features, and 3D showcase graphic.',
+        'actions' => '<a href="' . route('admin.services.index') . '" class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg> Back to Services</a>'
+    ])
+
+    @php $media = app(\App\Services\MediaService::class); @endphp
+
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-6 lg:p-8 shadow-sm max-w-4xl">
+        <form action="{{ route('admin.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div class="sm:col-span-2">
+                    <label for="title" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Service Title *</label>
+                    <input type="text" name="title" id="title" value="{{ old('title', $service->title) }}" required class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="icon" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Icon / Emoji</label>
+                    <input type="text" name="icon" id="icon" value="{{ old('icon', $service->icon) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+                </div>
+            </div>
+
+            <div>
+                <label for="subtitle" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tagline / Short Subtitle</label>
+                <input type="text" name="subtitle" id="subtitle" value="{{ old('subtitle', $service->subtitle) }}" placeholder="e.g. Modern & high-performance websites" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">
+                <p class="text-[11px] text-slate-400 mt-1">This subtitle is shown under the service title in the left-hand timeline list.</p>
+            </div>
+
+            <div>
+                <label for="description" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Service Overview Description *</label>
+                <textarea name="description" id="description" rows="3" required class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-all">{{ old('description', $service->description) }}</textarea>
+            </div>
+
+            <!-- Service Feature Highlights (3 Key Points) -->
+            <div class="pt-4 border-t border-slate-100">
+                <div class="mb-3">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Key Feature Highlights (Shown in 3D Card)</h3>
+                    <p class="text-[11px] text-slate-500">Provide up to 3 strong selling points for this service.</p>
+                </div>
+
+                @php
+                    $existingFeatures = is_array($service->features) ? $service->features : [];
+                    $defaultTitles = ['Fast & Responsive', 'Modern UI/UX', 'Secure & Scalable'];
+                    $defaultDescs = ['Optimized for all devices', 'Clean and user-friendly designs', 'Built with best practices'];
+                @endphp
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    @for($i = 0; $i < 3; $i++)
+                        @php
+                            $featureTitle = old("features.$i.title", $existingFeatures[$i]['title'] ?? $defaultTitles[$i] ?? '');
+                            $featureDesc = old("features.$i.description", $existingFeatures[$i]['description'] ?? $defaultDescs[$i] ?? '');
+                        @endphp
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/40 space-y-3">
+                            <span class="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-600">Feature {{ $i + 1 }}</span>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Title</label>
+                                <input type="text" name="features[{{ $i }}][title]" value="{{ $featureTitle }}" placeholder="e.g. Fast & Responsive" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-800 focus:border-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Short Description</label>
+                                <input type="text" name="features[{{ $i }}][description]" value="{{ $featureDesc }}" placeholder="e.g. Optimized for all devices" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-800 focus:border-blue-500 outline-none">
+                            </div>
+                        </div>
+                    @endfor
+                </div>
+            </div>
+
+            <!-- Graphic Image for 3D Showcase (Laptop Screen) -->
+            <div class="pt-4 border-t border-slate-100">
+                <label for="image" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Service Showcase Image (Displayed on 3D Laptop Screen)</label>
+                @if($service->image)
+                    <div class="mb-3 flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <img src="{{ $media->url($service->image) }}" alt="{{ $service->title }}" class="h-20 w-32 object-cover rounded-lg border border-slate-300 shadow-sm">
+                        <div>
+                            <p class="text-xs font-bold text-slate-700">Current Showcase Graphic</p>
+                            <p class="text-[11px] text-slate-400">Upload a new image below if you'd like to replace it.</p>
+                        </div>
+                    </div>
+                @endif
+                <input type="file" name="image" id="image" accept="image/*" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs text-slate-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-bold">
+                <p class="text-[11px] text-slate-400 mt-1">Recommended: 16:9 ratio screenshot or mockup. Displayed dynamically inside the 3D laptop screen on the right.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-slate-100">
+                <div>
+                    <label for="order" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Display Order</label>
+                    <input type="number" name="order" id="order" value="{{ old('order', $service->order) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none">
+                </div>
+                <div class="flex items-center pt-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', $service->is_active) ? 'checked' : '' }} class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Active & Visible</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+                <a href="{{ route('admin.services.index') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all">Update Service</button>
+            </div>
+        </form>
+    </div>
 @endsection

@@ -13,8 +13,12 @@ class Testimonial extends Model
         'name',
         'position',
         'company',
+        'company_logo',
         'product_name',
         'contact_details',
+        'phone',
+        'growth_stat',
+        'social_links',
         'testimonial',
         'avatar',
         'rating',
@@ -24,6 +28,7 @@ class Testimonial extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'social_links' => 'array',
     ];
 }
 

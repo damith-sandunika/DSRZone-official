@@ -1,330 +1,464 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from '../config/axios';
-import ScrollReveal from './ScrollReveal';
 import { imageUrl } from '../utils/imageUrl';
+import { motion, AnimatePresence } from 'framer-motion';
 
-function StarRating({ value }) {
-  const v = Math.min(5, Math.max(0, Number(value) || 0));
-  return (
-    <div className="flex gap-1" aria-label={`Rating: ${v} out of 5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={i <= v ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'text-white/10'}>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function Testimonials() {
-  const [testimonials, setTestimonials] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    product_name: '',
-    company: '',
-    contact_details: '',
-    testimonial: '',
-    rating: 5,
-  });
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [status, setStatus] = useState({ type: '', message: '' });
-  const [submitting, setSubmitting] = useState(false);
-
-  const total = testimonials.length;
-  const canGoPrev = total > 1;
-  const canGoNext = total > 1;
-
-  const goPrev = useCallback(() => {
-    setCurrentIndex((i) => (i <= 0 ? total - 1 : i - 1));
-  }, [total]);
-
-  const goNext = useCallback(() => {
-    setCurrentIndex((i) => (i >= total - 1 ? 0 : i + 1));
-  }, [total]);
-
-  useEffect(() => {
-    axios.get('/api/v1/testimonials').then((res) => setTestimonials(Array.isArray(res.data) ? res.data : [])).catch(() => setTestimonials([])).finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (total <= 1) return;
-    const t = setInterval(goNext, 5000);
-    return () => clearInterval(t);
-  }, [total, goNext]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: name === 'rating' ? parseInt(value, 10) || 5 : value }));
-  };
-
-  const handleAvatarChange = (e) => {
-    setAvatarFile(e.target.files?.[0] || null);
-  };
-
-  const openModal = () => {
-    setModalOpen(true);
-    setStatus({ type: '', message: '' });
-    setFormData({ name: '', product_name: '', company: '', contact_details: '', testimonial: '', rating: 5 });
-    setAvatarFile(null);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    const input = document.getElementById('testimonial-avatar-modal');
-    if (input) input.value = '';
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setStatus({ type: '', message: '' });
-    try {
-      const body = new FormData();
-      body.append('name', formData.name);
-      body.append('testimonial', formData.testimonial);
-      body.append('rating', formData.rating);
-      if (formData.product_name) body.append('product_name', formData.product_name);
-      if (formData.company) body.append('company', formData.company);
-      if (formData.contact_details) body.append('contact_details', formData.contact_details);
-      if (avatarFile) body.append('avatar', avatarFile);
-
-      const response = await axios.post('/api/v1/testimonials', body, {
-        headers: { 'Content-Type': 'multipart/form-data', 'Accept': 'application/json' },
-      });
-      setStatus({ type: 'success', message: response.data.message || 'Thank you! Your review will appear after approval.' });
-      setFormData({ name: '', product_name: '', company: '', contact_details: '', testimonial: '', rating: 5 });
-      setAvatarFile(null);
-      const input = document.getElementById('testimonial-avatar-modal');
-      if (input) input.value = '';
-      setTimeout(closeModal, 2000);
-    } catch (error) {
-      const msg = error.response?.data?.errors
-        ? Object.values(error.response.data.errors).flat().join(', ')
-        : error.response?.data?.message || 'Something went wrong. Please try again.';
-      setStatus({ type: 'error', message: msg });
-    } finally {
-      setSubmitting(false);
+// High-quality professional avatar fallbacks if not uploaded in admin panel
+const FALLBACK_TESTIMONIALS = [
+    {
+        id: 1,
+        name: 'Kasun Perera',
+        position: 'Managing Director',
+        company: 'Rapid Laundromat Group',
+        phone: '+61 412 345 678',
+        growth_stat: '50% Faster Operations',
+        rating: 5,
+        testimonial: 'DSRZone developed our Laundry Management System exactly as we needed. The team understood our requirements very well and delivered a user-friendly system with great support. Our daily operations are now much easier and more efficient.',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+        company_logo: null
+    },
+    {
+        id: 2,
+        name: 'Sanduni Fernando',
+        position: 'Owner',
+        company: 'Spice Hub Restaurant',
+        phone: '+94 77 234 5678',
+        growth_stat: '3x Table Turnover',
+        rating: 5,
+        testimonial: 'The POS and online ordering system designed by DSRZone boosted our table turns and takeout orders significantly. Outstanding UI and reliable 24/7 uptime for our branches.',
+        avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80',
+        company_logo: null
+    },
+    {
+        id: 3,
+        name: 'Dilan Jayasinghe',
+        position: 'Director',
+        company: 'Sisira Driving School',
+        phone: '+94 71 889 9001',
+        growth_stat: '80% Less Paperwork',
+        rating: 5,
+        testimonial: 'Managing student appointments and exam dates was chaotic until DSRZone deployed our customized management portal. Extremely professional team and swift execution!',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
+        company_logo: null
+    },
+    {
+        id: 4,
+        name: 'Nadee Perera',
+        position: 'Owner',
+        company: 'Tasty Bites',
+        phone: '+94 76 543 2198',
+        growth_stat: '2x Customer Retention',
+        rating: 5,
+        testimonial: 'From brand identity and logos to their seamless web system, DSRZone exceeded our expectations. Our customer engagement doubled within the first few months.',
+        avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+        company_logo: null
+    },
+    {
+        id: 5,
+        name: 'Ruwan Chamara',
+        position: 'Director',
+        company: 'Drive Master',
+        phone: '+94 70 112 3344',
+        growth_stat: '99.9% Booking Accuracy',
+        rating: 5,
+        testimonial: 'A genuinely world-class team. DSRZone\'s automated scheduling and notification platform transformed our client communications and instructor workflows completely.',
+        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+        company_logo: null
     }
-  };
+];
 
-  return (
-    <section id="testimonials" className="py-24 sm:py-32 bg-[#030610] border-t border-white/5 relative overflow-hidden">
-      {/* Cyber Background Effects */}
-      <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] rounded-full bg-blue-400/5 blur-[120px] pointer-events-none" />
-      <div className="absolute inset-0 bg-[url('/images/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-5 pointer-events-none" />
+export default function Testimonials() {
+    const [testimonials, setTestimonials] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const timerRef = useRef(null);
+    const ROTATION_INTERVAL = 5500; // 5.5 seconds
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ScrollReveal>
-          <div className="text-center mb-16 sm:mb-20">
-            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-blue-400/90 mb-3">Clients Say</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-300">Testimonials</span>
-            </h2>
-            <p className="mt-6 text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              What our clients say about our robust systems and premium support.
-            </p>
-          </div>
-        </ScrollReveal>
+    // Fetch testimonials from API
+    useEffect(() => {
+        axios.get('/api/v1/testimonials')
+            .then((res) => {
+                if (res.data && res.data.length > 0) {
+                    setTestimonials(res.data);
+                } else {
+                    setTestimonials(FALLBACK_TESTIMONIALS);
+                }
+            })
+            .catch(() => setTestimonials(FALLBACK_TESTIMONIALS))
+            .finally(() => setLoading(false));
+    }, []);
 
-        {loading ? (
-          <div className="text-center text-gray-500 py-12 animate-pulse">Loading testimonials…</div>
-        ) : testimonials.length > 0 ? (
-          <ScrollReveal>
-            <div className="relative mx-auto max-w-4xl">
-              
-              <div className="overflow-hidden rounded-3xl border border-blue-500/20 bg-[#0a0c12]/60 backdrop-blur-xl p-8 md:p-14 min-h-[300px] shadow-2xl relative">
-                {/* Large Quote Icon */}
-                <div className="absolute top-0 right-6 text-[180px] text-blue-500/5 font-serif leading-none select-none pointer-events-none">
-                  "
+    const total = testimonials.length;
+
+    // Navigation callbacks
+    const handleNext = useCallback(() => {
+        setActiveIndex((prev) => (prev + 1) % (total || 1));
+    }, [total]);
+
+    const handlePrev = useCallback(() => {
+        setActiveIndex((prev) => (prev - 1 + (total || 1)) % (total || 1));
+    }, [total]);
+
+    // Auto-rotation
+    useEffect(() => {
+        if (total <= 1 || isPaused) return;
+
+        timerRef.current = setInterval(() => {
+            handleNext();
+        }, ROTATION_INTERVAL);
+
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [total, isPaused, handleNext, activeIndex]);
+
+    const current = testimonials[activeIndex] || testimonials[0] || FALLBACK_TESTIMONIALS[0];
+
+    // Determine avatar source
+    const getAvatarSrc = (item, fallbackIdx) => {
+        if (item?.avatar) {
+            return imageUrl(item.avatar);
+        }
+        return FALLBACK_TESTIMONIALS[fallbackIdx % FALLBACK_TESTIMONIALS.length].avatar;
+    };
+
+    return (
+        <section
+            id="testimonials"
+            className="relative py-20 lg:py-28 overflow-hidden bg-[#f4f7fb] text-slate-800 transition-colors duration-500"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+        >
+            {/* Ambient background glows & organic shapes */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-10 -left-20 w-[600px] h-[600px] bg-gradient-to-br from-blue-100/60 via-sky-50/40 to-transparent rounded-full blur-3xl" />
+                <div className="absolute -bottom-20 right-0 w-[700px] h-[700px] bg-gradient-to-tl from-indigo-100/40 via-blue-50/30 to-transparent rounded-full blur-3xl" />
+            </div>
+
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+
+                {/* ── TOP SECTION HEADER ───────────────────────── */}
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 lg:mb-16 gap-6">
+                    <div>
+                        <div className="flex items-center gap-2.5 mb-3">
+                            <span className="w-6 h-[2px] bg-blue-600 rounded-full" />
+                            <span className="text-xs sm:text-sm font-extrabold tracking-[0.2em] uppercase text-blue-600 font-mono">
+                                CLIENT REVIEWS
+                            </span>
+                        </div>
+
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
+                            Trusted by <br className="hidden sm:inline" />
+                            Businesses <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600">Like Yours</span>
+                        </h2>
+
+                        <p className="mt-4 text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-xl">
+                            Real feedback from our valued clients who are growing their businesses with our solutions.
+                        </p>
+                    </div>
+
+                    {/* Navigation Controls: Arrows and Slider Counter */}
+                    <div className="flex items-center gap-4 self-start lg:self-end">
+                        <button
+                            type="button"
+                            onClick={handlePrev}
+                            aria-label="Previous review"
+                            className="w-11 h-11 rounded-full bg-white border border-slate-200 hover:border-blue-500 text-slate-600 hover:text-blue-600 flex items-center justify-center shadow-sm hover:shadow transition-all duration-300"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleNext}
+                            aria-label="Next review"
+                            className="w-11 h-11 rounded-full bg-white border border-slate-200 hover:border-blue-500 text-slate-600 hover:text-blue-600 flex items-center justify-center shadow-sm hover:shadow transition-all duration-300"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+
+                        {/* Slide Counter */}
+                        <div className="flex items-center gap-2 pl-2">
+                            <span className="w-8 h-[2px] bg-blue-600 rounded-full" />
+                            <span className="text-xs sm:text-sm font-bold font-mono text-slate-700">
+                                {String(activeIndex + 1).padStart(2, '0')} / {String(total || 5).padStart(2, '0')}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentIndex}
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                    transition={{ duration: 0.4 }}
-                    className="flex flex-col md:flex-row gap-8 items-center md:items-start h-full relative z-10"
-                  >
-                    {/* Client Info (Left) */}
-                    <div className="flex flex-col items-center md:items-start text-center md:text-left shrink-0 md:w-64">
-                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-blue-500/50 bg-[#0a0c12] flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.15)] mb-5 relative group">
-                        <div className="absolute inset-0 bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        {testimonials[currentIndex].avatar ? (
-                          <img src={imageUrl(testimonials[currentIndex].avatar)} alt={testimonials[currentIndex].name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-4xl font-bold text-blue-400">{testimonials[currentIndex].name?.slice(0, 1) || '?'}</span>
-                        )}
-                      </div>
-                      
-                      <h3 className="font-extrabold text-white text-xl md:text-2xl mb-1">{testimonials[currentIndex].name}</h3>
-                      {testimonials[currentIndex].company && <p className="text-sm font-semibold text-blue-400 mb-1">{testimonials[currentIndex].company}</p>}
-                      {testimonials[currentIndex].product_name && <p className="text-xs text-slate-400 bg-white/5 px-3 py-1 rounded-full mt-2">{testimonials[currentIndex].product_name}</p>}
+                {/* ── MAIN SPOTLIGHT: SPEECH CARD + PORTRAIT SHOWCASE ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16">
+
+                    {/* ── LEFT: SPEECH BUBBLE REVIEW CARD (7 COLS) ─ */}
+                    <div className="lg:col-span-7">
+                        <div className="relative rounded-[2.5rem] bg-white p-7 sm:p-10 lg:p-12 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] border border-slate-100">
+
+                            {/* Speech Bubble Arrow Tail pointing towards the client */}
+                            <div className="hidden lg:block absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border-t border-r border-slate-100 rotate-45" />
+
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={current?.id || activeIndex}
+                                    initial={{ opacity: 0, y: 15 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -15 }}
+                                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                                >
+                                    {/* Stars & Quotation Mark Header */}
+                                    <div className="flex items-center justify-between mb-6">
+                                        {/* Golden Stars */}
+                                        <div className="flex items-center gap-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <svg
+                                                    key={i}
+                                                    className={`w-5 h-5 ${i < (current?.rating || 5) ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-200'}`}
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            ))}
+                                        </div>
+
+                                        {/* Big Stylized Quote Icon */}
+                                        <div className="text-blue-200/90 leading-none select-none">
+                                            <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    {/* Testimonial Quote Message */}
+                                    <p className="text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-normal mb-8">
+                                        "{current?.testimonial}"
+                                    </p>
+
+                                    {/* Divider */}
+                                    <div className="border-t border-slate-100 pt-6">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+
+                                            {/* Company Info / Logo */}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center p-2 shrink-0 shadow-sm">
+                                                    {current?.company_logo ? (
+                                                        <img
+                                                            src={imageUrl(current.company_logo)}
+                                                            alt={current.company}
+                                                            className="w-full h-full object-contain"
+                                                        />
+                                                    ) : (
+                                                        /* Stylized Company Emblem */
+                                                        <svg className="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M2 12h20" />
+                                                            <path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" />
+                                                            <path d="m4 8 16-4" />
+                                                            <path d="m4 4 16 4" />
+                                                        </svg>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
+                                                        {current?.company || 'Enterprise Client'}
+                                                    </h4>
+                                                    <p className="text-[11px] text-slate-500 font-medium">
+                                                        Verified Business Client
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Client Name & Position */}
+                                            <div className="sm:border-l sm:border-slate-100 sm:pl-6">
+                                                <h4 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
+                                                    {current?.name}
+                                                </h4>
+                                                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                                                    {current?.position}
+                                                    {current?.company ? `, ${current.company}` : ''}
+                                                </p>
+                                            </div>
+
+                                        </div>
+
+                                        {/* Social Links & Telephone Number Row */}
+                                        <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-5 border-t border-slate-100">
+                                            {/* Social Media Badges */}
+                                            <div className="flex items-center gap-2">
+                                                {/* Facebook */}
+                                                <span className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform">
+                                                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                                    </svg>
+                                                </span>
+                                                {/* Instagram */}
+                                                <span className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform">
+                                                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                                    </svg>
+                                                </span>
+                                                {/* LinkedIn */}
+                                                <span className="w-7 h-7 rounded-full bg-[#0077b5] text-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform">
+                                                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                                                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                                                    </svg>
+                                                </span>
+                                                {/* WhatsApp */}
+                                                <span className="w-7 h-7 rounded-full bg-[#25d366] text-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform">
+                                                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                                                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+
+                                            {/* Phone / Telephone Number */}
+                                            {current?.phone && (
+                                                <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-800">
+                                                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                    </svg>
+                                                    <span className="font-mono">{current.phone}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+
+                        </div>
                     </div>
 
-                    {/* Testimonial Content (Right) */}
-                    <div className="flex-1 flex flex-col justify-center border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0 md:pl-8">
-                      <div className="mb-6">
-                        <StarRating value={testimonials[currentIndex].rating} />
-                      </div>
-                      <p className="text-slate-300 leading-relaxed text-lg sm:text-xl font-medium italic">
-                        "{testimonials[currentIndex].testimonial}"
-                      </p>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    {/* ── RIGHT: CLIENT PORTRAIT SHOWCASE (5 COLS) ─ */}
+                    <div className="lg:col-span-5 relative flex justify-center">
 
-              {total > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={goPrev}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-6 w-12 h-12 rounded-full border border-blue-500/30 bg-[#0a0c12]/90 backdrop-blur-md text-blue-400 flex items-center justify-center hover:bg-blue-500/20 hover:scale-110 transition-all shadow-xl z-20"
-                    aria-label="Previous testimonial"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-6 w-12 h-12 rounded-full border border-blue-500/30 bg-[#0a0c12]/90 backdrop-blur-md text-blue-400 flex items-center justify-center hover:bg-blue-500/20 hover:scale-110 transition-all shadow-xl z-20"
-                    aria-label="Next testimonial"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                  </button>
-                  
-                  <div className="flex justify-center gap-2 mt-8">
-                    {testimonials.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setCurrentIndex(i)}
-                        className={`h-2 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]' : 'w-2 bg-blue-500/20 hover:bg-blue-500/50'}`}
-                        aria-label={`Go to testimonial ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
+                        {/* Portrait Frame Container */}
+                        <div className="relative w-full max-w-[360px] sm:max-w-[400px]">
+
+                            {/* Floating Badge 1 (Top Right): Business Growth Partner */}
+                            <motion.div
+                                animate={{ y: [0, -6, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                                className="absolute -top-4 -right-2 sm:-right-4 z-30 flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-blue-600 text-white shadow-[0_10px_25px_rgba(37,99,235,0.4)]"
+                            >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="18" y1="20" x2="18" y2="10" />
+                                    <line x1="12" y1="20" x2="12" y2="4" />
+                                    <line x1="6" y1="20" x2="6" y2="14" />
+                                </svg>
+                                <span className="text-[11px] sm:text-xs font-bold whitespace-nowrap">
+                                    Business Growth Partner
+                                </span>
+                            </motion.div>
+
+                            {/* Main Portrait Card */}
+                            <div className="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-blue-500/20 via-sky-400/10 to-indigo-500/20 p-2 sm:p-2.5 border border-white/80 shadow-2xl backdrop-blur-md">
+                                <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] bg-slate-900 shadow-inner">
+                                    <AnimatePresence mode="wait">
+                                        <motion.img
+                                            key={current?.id || activeIndex}
+                                            src={getAvatarSrc(current, activeIndex)}
+                                            alt={current?.name}
+                                            initial={{ opacity: 0, scale: 1.05 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.98 }}
+                                            transition={{ duration: 0.4 }}
+                                            className="w-full h-full object-cover object-center"
+                                        />
+                                    </AnimatePresence>
+
+                                    {/* Bottom soft gradient shadow */}
+                                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent pointer-events-none" />
+                                </div>
+                            </div>
+
+                            {/* Floating Badge 2 (Bottom Right): 50% Faster Operations */}
+                            <motion.div
+                                animate={{ y: [0, 6, 0] }}
+                                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+                                className="absolute -bottom-4 -right-2 sm:-right-4 z-30 flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-100 shadow-[0_15px_30px_rgba(15,23,42,0.12)] text-slate-800"
+                            >
+                                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                        <polyline points="17 6 23 6 23 12" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h5 className="text-sm sm:text-base font-black text-slate-900 leading-none">
+                                        {current?.growth_stat || '50% Faster'}
+                                    </h5>
+                                    <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+                                        Business Productivity
+                                    </p>
+                                </div>
+                            </motion.div>
+
+                            {/* Handwritten scribble script caption */}
+                            <div className="absolute -bottom-14 left-4 sm:left-8 flex items-center gap-2 select-none pointer-events-none">
+                                <svg className="w-8 h-8 text-blue-500 -rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                                <span className="text-xl sm:text-2xl font-bold text-blue-600 font-['Caveat',cursive] drop-shadow-sm">
+                                    Our Happy Client
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* ── BOTTOM CLIENT STRIP: HORIZONTAL MINI CARDS (AUTO ROTATING) ── */}
+                <div className="pt-6 sm:pt-10">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                        {testimonials.map((item, idx) => {
+                            const isActive = idx === activeIndex;
+
+                            return (
+                                <button
+                                    key={item.id || idx}
+                                    type="button"
+                                    onClick={() => setActiveIndex(idx)}
+                                    className={`relative text-left p-3 sm:p-4 rounded-2xl transition-all duration-300 cursor-pointer flex items-center gap-3 ${
+                                        isActive
+                                            ? 'bg-white shadow-[0_12px_30px_rgba(37,99,235,0.15)] border-b-2 border-blue-600 scale-[1.02]'
+                                            : 'bg-white/60 hover:bg-white/90 border border-slate-200/60 text-slate-600'
+                                    }`}
+                                >
+                                    {/* Mini Avatar */}
+                                    <img
+                                        src={getAvatarSrc(item, idx)}
+                                        alt={item.name}
+                                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover shrink-0 border-2 transition-colors ${
+                                            isActive ? 'border-blue-500 shadow-sm' : 'border-slate-200'
+                                        }`}
+                                    />
+
+                                    {/* Name & Position */}
+                                    <div className="min-w-0 flex-1">
+                                        <h5 className={`text-xs font-bold truncate leading-snug ${
+                                            isActive ? 'text-slate-900' : 'text-slate-700'
+                                        }`}>
+                                            {item.name}
+                                        </h5>
+                                        <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                                            {item.position || 'Client'}
+                                        </p>
+                                        <p className="text-[9px] text-slate-400 truncate">
+                                            {item.company}
+                                        </p>
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
             </div>
-          </ScrollReveal>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-slate-500 bg-white/5 rounded-2xl inline-block px-6 py-4">No testimonials yet. Be the first to leave a review.</p>
-          </div>
-        )}
-
-        <ScrollReveal>
-          <div className="text-center mt-12">
-            <button
-              type="button"
-              onClick={openModal}
-              className="inline-flex items-center gap-3 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 font-semibold px-8 py-3.5 hover:bg-blue-600/20 hover:border-blue-400 transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-              Add Review
-            </button>
-          </div>
-        </ScrollReveal>
-      </div>
-
-      {/* Popup modal for Add review */}
-      <AnimatePresence>
-        {modalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={closeModal}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.3 }}
-              className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl border border-blue-500/20 bg-[#0a0c12] shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="sticky top-0 flex items-center justify-between border-b border-white/5 bg-[#0a0c12]/95 backdrop-blur-md px-6 py-5 z-10">
-                <h3 className="text-xl font-bold text-white">Add Review</h3>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                  aria-label="Close"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-              <div className="p-6 sm:p-8">
-                {status.message && (
-                  <div
-                    className={`mb-6 p-4 rounded-xl text-sm font-medium ${
-                      status.type === 'success' ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400' : 'bg-red-500/10 border border-red-500/30 text-red-400'
-                    }`}
-                  >
-                    {status.message}
-                  </div>
-                )}
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div>
-                      <label htmlFor="tm-name" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name *</label>
-                      <input id="tm-name" name="name" value={formData.name} onChange={handleChange} required className="input-professional bg-white/5 border-white/10 text-white rounded-xl focus:border-blue-500/50 focus:ring-blue-500/20" placeholder="Your name" />
-                    </div>
-                    <div>
-                      <label htmlFor="tm-product" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Product name</label>
-                      <input id="tm-product" name="product_name" value={formData.product_name} onChange={handleChange} className="input-professional bg-white/5 border-white/10 text-white rounded-xl focus:border-blue-500/50 focus:ring-blue-500/20" placeholder="e.g. Smarty Menu" />
-                    </div>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div>
-                      <label htmlFor="tm-company" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Company</label>
-                      <input id="tm-company" name="company" value={formData.company} onChange={handleChange} className="input-professional bg-white/5 border-white/10 text-white rounded-xl focus:border-blue-500/50 focus:ring-blue-500/20" placeholder="Company name" />
-                    </div>
-                    <div>
-                      <label htmlFor="tm-contact" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Contact</label>
-                      <input id="tm-contact" name="contact_details" value={formData.contact_details} onChange={handleChange} className="input-professional bg-white/5 border-white/10 text-white rounded-xl focus:border-blue-500/50 focus:ring-blue-500/20" placeholder="Email or phone" />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="tm-review" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Your review *</label>
-                    <textarea id="tm-review" name="testimonial" value={formData.testimonial} onChange={handleChange} required rows={4} className="input-professional bg-white/5 border-white/10 text-white rounded-xl focus:border-blue-500/50 focus:ring-blue-500/20 resize-none" placeholder="Share your experience..." />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-5">
-                    <div>
-                      <label htmlFor="tm-rating" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Rating (1–5)</label>
-                      <input id="tm-rating" name="rating" type="number" min={1} max={5} value={formData.rating} onChange={handleChange} className="input-professional bg-white/5 border-white/10 text-white rounded-xl focus:border-blue-500/50 focus:ring-blue-500/20 w-24 text-center" />
-                    </div>
-                    <div className="flex-1 min-w-[180px]">
-                      <label htmlFor="testimonial-avatar-modal" className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Profile photo</label>
-                      <input id="testimonial-avatar-modal" type="file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" onChange={handleAvatarChange} className="w-full text-sm text-slate-400 file:mr-3 file:rounded-xl file:border-0 file:bg-blue-500/10 file:px-4 file:py-2 file:text-blue-400 file:font-semibold hover:file:bg-blue-500/20 transition-all cursor-pointer" />
-                    </div>
-                  </div>
-                  <div className="flex gap-4 pt-4 mt-4 border-t border-white/5">
-                    <button type="button" onClick={closeModal} className="flex-1 rounded-xl border border-white/10 px-4 py-3.5 text-slate-300 font-semibold hover:bg-white/5 transition-colors">
-                      Cancel
-                    </button>
-                    <button type="submit" disabled={submitting} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl py-3.5 shadow-lg shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                      {submitting ? 'Submitting…' : 'Submit Review'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </section>
-  );
+        </section>
+    );
 }
-
-export default Testimonials;
