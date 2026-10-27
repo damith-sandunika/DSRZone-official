@@ -8,6 +8,7 @@ import Products from './Products';
 import SriLankaMap from './SriLankaMap';
 import Portfolio from './Portfolio';
 import Contact from './Contact';
+import ProjectShowcase from './ProjectShowcase';
 import Testimonials from './Testimonials';
 import Footer from './Footer';
 import CursorGlow from './CursorGlow';
@@ -27,6 +28,7 @@ function HomePage({ onVideoReady }) {
                 <Portfolio />
                 <Testimonials />
                 <Contact />
+                <ProjectShowcase />
             </main>
             <Footer />
         </>
