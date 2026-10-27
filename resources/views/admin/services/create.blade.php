@@ -63,11 +63,11 @@
                 </div>
             </div>
 
-            <!-- Graphic Image for 3D Showcase (Laptop Screen) -->
+            <!-- Graphic Image for Service Card Showcase -->
             <div class="pt-4 border-t border-slate-100">
-                <label for="image" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Service Showcase Image (Displayed on 3D Laptop Screen) *</label>
+                <label for="image" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Service Showcase Image (Displayed Full-Width on Service Card) *</label>
                 <input type="file" name="image" id="image" accept="image/*" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs text-slate-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-bold">
-                <p class="text-[11px] text-slate-400 mt-1">Recommended: 16:9 ratio high-resolution screenshot or mockup (e.g. 1920x1080 or 1200x675). This image will be beautifully placed inside the 3D laptop preview on the right side.</p>
+                <p class="text-[11px] text-slate-400 mt-1">Recommended: 16:9 or 16:10 high-resolution graphic/screenshot. Displayed full-width on the service card.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-slate-100">

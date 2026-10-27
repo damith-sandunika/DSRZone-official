@@ -3,7 +3,7 @@ import axios from '../config/axios';
 import { imageUrl } from '../utils/imageUrl';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// Fallback services matching the exact design if backend data is not yet loaded
+// Fallback services matching default content if backend is offline
 const FALLBACK_SERVICES = [
     {
         id: 1,
@@ -72,7 +72,6 @@ const FALLBACK_SERVICES = [
     }
 ];
 
-// Helper to render SVG icons based on key
 function ServiceIcon({ name, className = 'w-5 h-5' }) {
     switch (name) {
         case 'code':
@@ -123,8 +122,7 @@ function ServiceIcon({ name, className = 'w-5 h-5' }) {
     }
 }
 
-// Feature bullet icons (Fast, Modern UI/UX, Secure)
-function FeatureBulletIcon({ index, className = 'w-5 h-5' }) {
+function FeatureBulletIcon({ index, className = 'w-4 h-4' }) {
     if (index === 0) {
         return (
             <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -157,7 +155,7 @@ export default function Services() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const timerRef = useRef(null);
-    const ROTATION_INTERVAL = 5500; // 5.5 seconds auto rotation
+    const ROTATION_INTERVAL = 6000;
 
     // Fetch services from API
     useEffect(() => {
@@ -175,7 +173,6 @@ export default function Services() {
 
     const total = services.length;
 
-    // Next & Previous handlers
     const handleNext = useCallback(() => {
         setActiveIndex((prev) => (prev + 1) % (total || 1));
     }, [total]);
@@ -184,7 +181,6 @@ export default function Services() {
         setActiveIndex((prev) => (prev - 1 + (total || 1)) % (total || 1));
     }, [total]);
 
-    // Auto-rotation timer
     useEffect(() => {
         if (total <= 1 || isPaused) return;
 
@@ -199,7 +195,6 @@ export default function Services() {
 
     const currentService = services[activeIndex] || services[0] || FALLBACK_SERVICES[0];
 
-    // Default features if not present in DB
     const featuresList = (currentService?.features && currentService.features.length > 0)
         ? currentService.features
         : [
@@ -215,12 +210,10 @@ export default function Services() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            {/* ── AMBIENT ARCHITECTURAL BACKGROUND ──────────── */}
+            {/* Ambient Lighting & Blueprint Accents */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute -top-32 -right-24 w-[700px] h-[700px] bg-gradient-to-br from-blue-100/70 via-sky-50/40 to-transparent rounded-full blur-3xl" />
                 <div className="absolute top-1/4 -left-40 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/40 via-indigo-50/30 to-transparent rounded-full blur-3xl" />
-
-                {/* Subtle Architectural Grid Lines */}
                 <div
                     className="absolute inset-0 opacity-[0.035]"
                     style={{
@@ -228,7 +221,6 @@ export default function Services() {
                         backgroundSize: '80px 80px'
                     }}
                 />
-
                 <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-slate-200/50 via-slate-100/20 to-transparent" />
             </div>
 
@@ -255,149 +247,164 @@ export default function Services() {
 
                 {/* ══════════════════════════════════════════════════════
                     MOBILE VIEW (< lg)
-                    - Compact horizontal scroll tab pills (No huge vertical 5-button block!)
-                    - Single sleek white card with full width image & details
+                    - Left/Center: Scaled Card with full width image & text shade
+                    - Right-side: ONLY the 1, 2, 3, 4, 5 numbered buttons
+                    - Bottom: Arrows (< >) and Get Started button
                    ══════════════════════════════════════════════════════ */}
                 <div className="block lg:hidden">
-                    {/* Horizontal Sliding Tab Pills */}
-                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 mb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
-                        {services.map((svc, idx) => {
-                            const isActive = idx === activeIndex;
-                            const numStr = String(idx + 1).padStart(2, '0');
+                    {/* Row with Card (in front) and 1,2,3,4 buttons (on right) */}
+                    <div className="flex items-stretch gap-3 mb-6">
 
-                            return (
-                                <button
-                                    key={svc.id || idx}
-                                    type="button"
-                                    onClick={() => setActiveIndex(idx)}
-                                    className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                                        isActive
-                                            ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md shadow-blue-500/30'
-                                            : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'
-                                    }`}
+                        {/* Service Card */}
+                        <div className="flex-1 min-w-0 rounded-3xl bg-white border border-slate-200/90 shadow-[0_15px_35px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col justify-between relative">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentService?.id || activeIndex}
+                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="flex flex-col h-full"
                                 >
-                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
-                                        isActive ? 'bg-white text-blue-600' : 'bg-slate-100 text-slate-500'
-                                    }`}>
+                                    {/* Full Width Showcase Image */}
+                                    <div className="relative w-full aspect-[16/10] bg-slate-900 overflow-hidden">
+                                        {currentService?.image ? (
+                                            <img
+                                                src={imageUrl(currentService.image)}
+                                                alt={currentService.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center">
+                                                <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg mb-2">
+                                                    <ServiceIcon name={currentService?.icon} className="w-6 h-6" />
+                                                </div>
+                                                <p className="text-xs font-bold text-white">{currentService?.title}</p>
+                                            </div>
+                                        )}
+                                        {/* Soft gradient shade over bottom edge of image */}
+                                        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                                    </div>
+
+                                    {/* Card Text Content with subtle soft background shade */}
+                                    <div className="p-4 sm:p-5 pt-1 flex flex-col flex-1 justify-between bg-white relative">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1.5">
+                                                <span className="text-base font-black font-mono text-blue-600">
+                                                    {String(activeIndex + 1).padStart(2, '0')}
+                                                </span>
+                                                <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-blue-600">
+                                                    SERVICE
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug mb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.06)]">
+                                                {currentService?.title}
+                                            </h3>
+
+                                            <p className="text-xs text-slate-600 leading-relaxed font-medium mb-3 line-clamp-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.03)]">
+                                                {currentService?.description}
+                                            </p>
+
+                                            {/* Feature Points */}
+                                            <div className="space-y-1.5 mb-4">
+                                                {featuresList.slice(0, 3).map((feat, fIdx) => (
+                                                    <div key={fIdx} className="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50 border border-slate-100">
+                                                        <div className="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                                            <FeatureBulletIcon index={fIdx} className="w-3 h-3" />
+                                                        </div>
+                                                        <span className="text-[11px] font-bold text-slate-800 truncate">{feat.title}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <a
+                                            href="#contact"
+                                            className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-colors text-center"
+                                        >
+                                            <span>Explore Service</span>
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Right-Side Numbered Buttons Rail (1, 2, 3, 4, 5 ONLY) */}
+                        <div className="flex flex-col justify-between items-center py-1 shrink-0 gap-2">
+                            {services.map((svc, idx) => {
+                                const isActive = idx === activeIndex;
+                                const numStr = String(idx + 1).padStart(2, '0');
+
+                                return (
+                                    <button
+                                        key={svc.id || idx}
+                                        type="button"
+                                        onClick={() => setActiveIndex(idx)}
+                                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs font-bold font-mono transition-all duration-200 cursor-pointer ${
+                                            isActive
+                                                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/40 scale-105'
+                                                : 'bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 shadow-sm'
+                                        }`}
+                                    >
                                         {numStr}
-                                    </span>
-                                    <span className="whitespace-nowrap">{svc.title}</span>
-                                </button>
-                            );
-                        })}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
                     </div>
 
-                    {/* Compact White Mobile Card */}
-                    <div className="rounded-3xl bg-white border border-slate-200/90 shadow-[0_15px_40px_rgba(15,23,42,0.08)] p-5 sm:p-6 overflow-hidden">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={currentService?.id || activeIndex}
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -12 }}
-                                transition={{ duration: 0.3 }}
-                                className="flex flex-col"
-                            >
-                                {/* Full Width Service Image */}
-                                <div className="w-full aspect-[16/10] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm mb-5 relative">
-                                    {currentService?.image ? (
-                                        <img
-                                            src={imageUrl(currentService.image)}
-                                            alt={currentService.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-blue-50 via-slate-50 to-sky-50 flex flex-col items-center justify-center p-6 text-center">
-                                            <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md mb-2">
-                                                <ServiceIcon name={currentService?.icon} className="w-6 h-6" />
-                                            </div>
-                                            <p className="text-xs font-bold text-slate-800">{currentService?.title}</p>
-                                            <p className="text-[10px] text-slate-500 mt-0.5">High-Performance Engineering</p>
-                                        </div>
-                                    )}
-                                </div>
+                    {/* Bottom Controls: Prev Arrow, Get Started CTA, Next Arrow */}
+                    <div className="flex items-center justify-center gap-3">
+                        <button
+                            type="button"
+                            onClick={handlePrev}
+                            aria-label="Previous service"
+                            className="w-11 h-11 rounded-full bg-white border border-slate-200 hover:border-blue-500 text-slate-700 hover:text-blue-600 flex items-center justify-center shadow-sm active:scale-95 transition-all"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
 
-                                {/* Service Details Header */}
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-lg font-black font-mono text-blue-600">
-                                        {String(activeIndex + 1).padStart(2, '0')}
-                                    </span>
-                                    <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-blue-600">
-                                        SERVICE
-                                    </span>
-                                </div>
+                        <a
+                            href="#contact"
+                            className="flex-1 max-w-[220px] py-3 px-6 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 active:scale-95 transition-all"
+                        >
+                            <span>Get Started</span>
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </a>
 
-                                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-                                    {currentService?.title}
-                                </h3>
-
-                                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium mb-4 drop-shadow-[0_1px_1px_rgba(0,0,0,0.03)]">
-                                    {currentService?.description}
-                                </p>
-
-                                {/* 3 Compact Feature Pills */}
-                                <div className="space-y-2 mb-5">
-                                    {featuresList.slice(0, 3).map((feat, fIdx) => (
-                                        <div key={fIdx} className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50/80 border border-slate-100">
-                                            <div className="w-6 h-6 rounded-lg bg-blue-100/70 text-blue-600 flex items-center justify-center shrink-0">
-                                                <FeatureBulletIcon index={fIdx} className="w-3.5 h-3.5" />
-                                            </div>
-                                            <span className="text-xs font-bold text-slate-800 truncate">{feat.title}</span>
-                                            <span className="text-[10px] text-slate-500 hidden sm:inline truncate">- {feat.description}</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Controls Row: Prev, Explore CTA, Next */}
-                                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-                                    <button
-                                        type="button"
-                                        onClick={handlePrev}
-                                        aria-label="Previous service"
-                                        className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 transition-colors"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-
-                                    <a
-                                        href="#contact"
-                                        className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-colors text-center"
-                                    >
-                                        <span>Explore Service</span>
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                        </svg>
-                                    </a>
-
-                                    <button
-                                        type="button"
-                                        onClick={handleNext}
-                                        aria-label="Next service"
-                                        className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 transition-colors"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
+                        <button
+                            type="button"
+                            onClick={handleNext}
+                            aria-label="Next service"
+                            className="w-11 h-11 rounded-full bg-white border border-slate-200 hover:border-blue-500 text-slate-700 hover:text-blue-600 flex items-center justify-center shadow-sm active:scale-95 transition-all"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
                 {/* ══════════════════════════════════════════════════════
                     DESKTOP VIEW (lg:)
                     - Left Column (4 cols): Vertical Timeline List + Controls
-                    - Right Column (8 cols): White Card with Full Width Image
+                    - Right Column (8 cols): Large Card with FULL WIDTH IMAGE
+                      and smooth white shade behind text for high legibility
                    ══════════════════════════════════════════════════════ */}
                 <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12 items-center">
 
                     {/* Left Column: Vertical Timeline List (4 cols) */}
                     <div className="col-span-4 flex flex-col justify-between">
                         <div className="relative pl-3">
-                            {/* Vertical timeline line */}
                             <div className="absolute left-[27px] top-6 bottom-6 w-[1.5px] bg-slate-200" />
 
                             <div className="space-y-4">
@@ -416,7 +423,6 @@ export default function Services() {
                                                     : 'hover:bg-white/80 text-slate-700'
                                             }`}
                                         >
-                                            {/* Number Circle */}
                                             <div
                                                 className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 transition-colors duration-300 ${
                                                     isActive
@@ -427,7 +433,6 @@ export default function Services() {
                                                 {numStr}
                                             </div>
 
-                                            {/* Icon */}
                                             <div
                                                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                                                     isActive
@@ -438,7 +443,6 @@ export default function Services() {
                                                 <ServiceIcon name={svc.icon} className="w-4 h-4" />
                                             </div>
 
-                                            {/* Title & Subtitle */}
                                             <div className="min-w-0 flex-1 pr-2">
                                                 <h4 className={`text-sm font-bold truncate leading-snug ${
                                                     isActive ? 'text-white' : 'text-slate-800 group-hover:text-blue-600'
@@ -452,10 +456,9 @@ export default function Services() {
                                                 </p>
                                             </div>
 
-                                            {/* Active Indicator Arrow */}
                                             {isActive && (
                                                 <motion.div
-                                                    layoutId="activeIndicator"
+                                                    layoutId="activeIndicatorDesktop"
                                                     className="w-1.5 h-6 bg-white/40 rounded-full mr-1"
                                                 />
                                             )}
@@ -501,111 +504,96 @@ export default function Services() {
                         </div>
                     </div>
 
-                    {/* Right Column: Clean White Card with Full Width Image (8 cols) */}
+                    {/* Right Column (8 cols): Card with FULL WIDTH IMAGE & SMOOTH SHADE */}
                     <div className="col-span-8 relative">
-                        <div className="relative rounded-[2.5rem] bg-white border border-slate-200/80 p-8 lg:p-10 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.08)] overflow-hidden">
+                        <div className="relative rounded-[2.5rem] bg-white border border-slate-200/90 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.08)] overflow-hidden min-h-[500px] flex items-center">
 
-                            {/* Subtle Ambient Specular Glare */}
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-50/50 via-sky-50/20 to-transparent pointer-events-none rounded-full blur-2xl -mr-20 -mt-20" />
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentService?.id || activeIndex}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.35 }}
+                                    className="absolute inset-0 w-full h-full"
+                                >
+                                    {/* 1. Full-Width Service Image in the Card Background */}
+                                    {currentService?.image ? (
+                                        <img
+                                            src={imageUrl(currentService.image)}
+                                            alt={currentService.title}
+                                            className="w-full h-full object-cover object-right"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-slate-50 via-sky-50/40 to-blue-50 flex items-center justify-end pr-16">
+                                            <div className="w-64 h-64 rounded-full bg-blue-100/40 blur-3xl" />
+                                        </div>
+                                    )}
 
-                            <div className="grid grid-cols-12 gap-8 items-center">
+                                    {/* 2. Soft White Shade Gradient behind text for 100% legibility */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 via-48% to-white/10 pointer-events-none" />
+                                </motion.div>
+                            </AnimatePresence>
 
-                                {/* Left Half of Card: Service Details */}
-                                <div className="col-span-6 z-10">
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={currentService?.id || activeIndex}
-                                            initial={{ opacity: 0, y: 16 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -16 }}
-                                            transition={{ duration: 0.35, ease: 'easeOut' }}
-                                        >
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <span className="text-2xl font-black font-mono text-slate-900 tracking-tight">
-                                                    {String(activeIndex + 1).padStart(2, '0')}
-                                                </span>
-                                                <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-600">
-                                                    SERVICE
-                                                </span>
-                                            </div>
+                            {/* 3. Text & Details sitting on top of the soft shade */}
+                            <div className="relative z-20 max-w-lg p-8 lg:p-12">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={currentService?.id || activeIndex}
+                                        initial={{ opacity: 0, y: 14 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -14 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-2xl font-black font-mono text-slate-900 tracking-tight">
+                                                {String(activeIndex + 1).padStart(2, '0')}
+                                            </span>
+                                            <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-600">
+                                                SERVICE
+                                            </span>
+                                        </div>
 
-                                            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)]">
-                                                {currentService?.title}
-                                            </h3>
+                                        <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-tight mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)]">
+                                            {currentService?.title}
+                                        </h3>
 
-                                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium mb-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.03)]">
-                                                {currentService?.description}
-                                            </p>
+                                        <p className="text-sm text-slate-700 leading-relaxed font-medium mb-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.04)]">
+                                            {currentService?.description}
+                                        </p>
 
-                                            {/* 3 Key Feature Bullets */}
-                                            <div className="space-y-3.5 mb-8">
-                                                {featuresList.slice(0, 3).map((feat, fIdx) => (
-                                                    <div key={fIdx} className="flex items-start gap-3">
-                                                        <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                                                            <FeatureBulletIcon index={fIdx} className="w-4 h-4" />
-                                                        </div>
-                                                        <div className="min-w-0">
-                                                            <h5 className="text-xs sm:text-sm font-bold text-slate-800 leading-snug">
-                                                                {feat.title}
-                                                            </h5>
-                                                            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-                                                                {feat.description}
-                                                            </p>
-                                                        </div>
+                                        {/* 3 Key Feature Bullets */}
+                                        <div className="space-y-3.5 mb-8">
+                                            {featuresList.slice(0, 3).map((feat, fIdx) => (
+                                                <div key={fIdx} className="flex items-start gap-3">
+                                                    <div className="w-8 h-8 rounded-lg bg-blue-50/90 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                                                        <FeatureBulletIcon index={fIdx} className="w-4 h-4" />
                                                     </div>
-                                                ))}
-                                            </div>
-
-                                            <a
-                                                href="#contact"
-                                                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs tracking-wide shadow-md hover:shadow-lg transition-all duration-300 group"
-                                            >
-                                                <span>Explore Service</span>
-                                                <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                </svg>
-                                            </a>
-                                        </motion.div>
-                                    </AnimatePresence>
-                                </div>
-
-                                {/* Right Half of Card: Full Width Service Image Container */}
-                                <div className="col-span-6 relative">
-                                    <div className="w-full aspect-[16/11] rounded-2xl overflow-hidden shadow-lg border border-slate-100 bg-slate-50 relative group">
-                                        <AnimatePresence mode="wait">
-                                            <motion.div
-                                                key={currentService?.id || activeIndex}
-                                                initial={{ opacity: 0, scale: 0.98 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 1.02 }}
-                                                transition={{ duration: 0.35 }}
-                                                className="w-full h-full"
-                                            >
-                                                {currentService?.image ? (
-                                                    <img
-                                                        src={imageUrl(currentService.image)}
-                                                        alt={currentService.title}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-gradient-to-br from-blue-50/80 via-slate-50 to-indigo-50/50 p-6 flex flex-col items-center justify-center text-center">
-                                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 mb-3">
-                                                            <ServiceIcon name={currentService?.icon} className="w-8 h-8" />
-                                                        </div>
-                                                        <h4 className="text-base font-black text-slate-800 tracking-tight">
-                                                            {currentService?.title}
-                                                        </h4>
-                                                        <p className="text-xs text-slate-500 mt-1 max-w-[240px]">
-                                                            {currentService?.subtitle || 'Enterprise Technology Solutions'}
+                                                    <div className="min-w-0">
+                                                        <h5 className="text-xs sm:text-sm font-bold text-slate-800 leading-snug">
+                                                            {feat.title}
+                                                        </h5>
+                                                        <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+                                                            {feat.description}
                                                         </p>
                                                     </div>
-                                                )}
-                                            </motion.div>
-                                        </AnimatePresence>
-                                    </div>
-                                </div>
+                                                </div>
+                                            ))}
+                                        </div>
 
+                                        <a
+                                            href="#contact"
+                                            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs tracking-wide shadow-md hover:shadow-lg transition-all duration-300 group"
+                                        >
+                                            <span>Explore Service</span>
+                                            <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
+                                        </a>
+                                    </motion.div>
+                                </AnimatePresence>
                             </div>
+
                         </div>
                     </div>
 

@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-function Hero() {
+function Hero({ onVideoReady }) {
+    const videoRef = useRef(null);
     const stats = [
         { value: '50+', label: 'Projects Delivered', highlight: true },
         { value: '30+', label: 'Happy Clients' },
         { value: '5+', label: 'Industries', highlight: true },
         { value: '100%', label: 'Commitment' },
     ];
+
+    useEffect(() => {
+        if (videoRef.current && videoRef.current.readyState >= 2) {
+            onVideoReady?.();
+        }
+    }, [onVideoReady]);
+
+    const handleReady = () => {
+        onVideoReady?.();
+    };
 
     return (
         <section
@@ -20,11 +31,16 @@ function Hero() {
                 - On Desktop: Fullscreen cinematic background
                ══════════════════════════════════════════════════════════════ */}
             <video
+                ref={videoRef}
                 autoPlay
                 loop
                 muted
                 playsInline
                 preload="auto"
+                onLoadedData={handleReady}
+                onCanPlay={handleReady}
+                onCanPlayThrough={handleReady}
+                onPlaying={handleReady}
                 poster="/images/hero backgroudnd.png"
                 className="absolute top-0 inset-x-0 w-full h-[52vh] sm:h-[58vh] md:h-full md:inset-0 object-cover object-[75%_center] md:object-center z-0 pointer-events-none"
             >
