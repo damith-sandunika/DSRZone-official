@@ -21,8 +21,8 @@ function HomePage() {
             <main>
                 <Hero />
                 <About />
-                <Services />
                 <Products />
+                <Services />
                 <SriLankaMap />
                 <Portfolio />
                 <Testimonials />

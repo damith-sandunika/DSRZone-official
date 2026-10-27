@@ -6,171 +6,164 @@ import { products as staticProducts } from '../data/products';
 
 export default function Products() {
     const [products, setProducts] = useState(staticProducts);
-    const [currentIndex, setCurrentIndex] = useState(1);
-    const [isHovered, setIsHovered] = useState(false);
-    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
     useEffect(() => {
         let active = true;
         fetchProducts().then((data) => {
             if (active && data?.length) {
                 setProducts(data);
-                if (data.length > 1) setCurrentIndex(1);
             }
         });
-        const onResize = () => setWindowWidth(window.innerWidth);
-        window.addEventListener('resize', onResize);
         return () => {
             active = false;
-            window.removeEventListener('resize', onResize);
         };
     }, []);
 
-    const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % products.length);
-    const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
-
-    useEffect(() => {
-        if (isHovered || products.length <= 1) return;
-        const timer = setInterval(nextSlide, 3800);
-        return () => clearInterval(timer);
-    }, [isHovered, products.length]);
-
-    const getOffset = (idx) => {
-        const len = products.length;
-        let diff = (idx - currentIndex) % len;
-        if (diff < -Math.floor(len / 2)) diff += len;
-        if (diff > Math.floor((len - 1) / 2)) diff -= len;
-        return diff;
-    };
-
-    const isMobile = windowWidth < 640;
-    const cardSpacing = isMobile ? Math.min(220, Math.round(windowWidth * 0.60)) : windowWidth < 1024 ? 330 : 400;
-    const rotateAngle = isMobile ? 32 : 28;
-
     return (
         <section id="products" className="relative w-full py-20 lg:py-28 overflow-hidden bg-[#030712]">
-            <div className="absolute inset-0 bg-cover bg-center pointer-events-none z-0 opacity-40 mix-blend-luminosity" style={{ backgroundImage: "url('/images/products_bg.jpg')" }} />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#030712] via-[#030712]/80 to-[#030712] pointer-events-none z-0" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-blue-600/15 blur-[140px] rounded-full pointer-events-none z-0" />
+            {/* Ambient Background Grid & Glows */}
+            <div
+                className="absolute inset-0 bg-cover bg-center pointer-events-none z-0 opacity-30 mix-blend-luminosity"
+                style={{ backgroundImage: "url('/images/products_bg.jpg')" }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#030712] via-[#030712]/85 to-[#030712] pointer-events-none z-0" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-blue-600/15 blur-[150px] rounded-full pointer-events-none z-0" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center mb-10 sm:mb-14">
+                {/* Section Header */}
+                <div className="text-center mb-12 sm:mb-16">
                     <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-[#38bdf8] mb-3">
-                        <span className="w-6 h-[1.5px] bg-[#38bdf8]" /><span>OUR PRODUCTS</span><span className="w-6 h-[1.5px] bg-[#38bdf8]" />
+                        <span className="w-6 h-[1.5px] bg-[#38bdf8]" />
+                        <span>OUR PRODUCTS</span>
+                        <span className="w-6 h-[1.5px] bg-[#38bdf8]" />
                     </div>
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-                        Powerful <span className="text-[#38bdf8]">Solutions</span><br />Built for Real Businesses
+                        Powerful <span className="text-[#38bdf8]">Solutions</span><br />
+                        Built for Real Businesses
                     </h2>
                     <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-                        Explore our range of software solutions designed to simplify operations, improve efficiency and help businesses grow.
+                        Explore our range of specialized software products engineered to automate workflows, accelerate operations and grow your enterprise.
                     </p>
                 </div>
 
-                {/* 3D Coverflow Smooth Moving Slider */}
-                <div 
-                    className="relative w-full h-[560px] sm:h-[620px] flex items-center justify-center [perspective:1400px] overflow-hidden"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    <button type="button" onClick={prevSlide} aria-label="Previous" className="hidden sm:flex absolute left-2 lg:left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#051536]/80 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-[#1062FE] backdrop-blur-md items-center justify-center transition-all shadow-2xl z-40">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
-                    </button>
+                {/* ── ALL PRODUCTS GRID (NO CAROUSEL, FULL VISIBILITY) ── */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+                    {products.map((prod, idx) => {
+                        const feats = Array.isArray(prod.features) && prod.features.length
+                            ? prod.features
+                            : ['Operations Workflow', 'Billing & Invoicing', 'Inventory & Reports', 'Instant Notifications'];
 
-                    <div className="relative w-full h-full flex items-center justify-center [transform-style:preserve-3d]">
-                        {products.map((prod, idx) => {
-                            const offset = getOffset(idx);
-                            const isCenter = offset === 0;
-                            const isVisible = Math.abs(offset) <= 1;
-                            const feats = Array.isArray(prod.features) && prod.features.length ? prod.features : ['Order Management', 'Billing & Payments', 'Inventory Control', 'Analytics'];
+                        return (
+                            <motion.div
+                                key={prod.id ?? prod.slug ?? idx}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: idx * 0.12 }}
+                                className="relative rounded-3xl overflow-hidden flex flex-col justify-between bg-gradient-to-b from-[#061530]/95 to-[#040e22]/95 border border-blue-500/25 hover:border-[#1062FE] shadow-[0_12px_35px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(16,98,254,0.35)] hover:-translate-y-2 transition-all duration-300 group"
+                            >
+                                {/* Top Banner Graphic with Product Icon */}
+                                <div className="relative w-full h-40 sm:h-44 overflow-hidden bg-slate-900/90">
+                                    {prod.background_image ? (
+                                        <img
+                                            src={prod.background_image}
+                                            alt={prod.name}
+                                            className="w-full h-full object-cover opacity-60 mix-blend-screen scale-105 group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-blue-900/40 via-cyan-900/20 to-transparent" />
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#061530]/60 to-[#061530]" />
 
-                            return (
-                                <motion.div
-                                    key={prod.id ?? prod.slug ?? idx}
-                                    onClick={() => !isCenter && setCurrentIndex(idx)}
-                                    initial={false}
-                                    animate={{
-                                        x: offset * cardSpacing,
-                                        rotateY: offset === 0 ? 0 : offset < 0 ? rotateAngle : -rotateAngle,
-                                        scale: isCenter ? (isMobile ? 1 : 1.06) : (isMobile ? 0.74 : 0.86),
-                                        zIndex: isCenter ? 30 : 20 - Math.abs(offset),
-                                        opacity: isVisible ? (isCenter ? 1 : (isMobile ? 0.7 : 0.85)) : 0,
-                                        pointerEvents: isVisible ? 'auto' : 'none',
-                                    }}
-                                    transition={{ duration: 0.65, ease: [0.25, 1, 0.5, 1] }}
-                                    className={`absolute w-[280px] sm:w-[350px] md:w-[370px] rounded-3xl overflow-hidden flex flex-col justify-between cursor-pointer select-none ${
-                                        isCenter
-                                            ? 'bg-[#061530]/95 border-2 border-[#1062FE] shadow-[0_0_50px_rgba(16,98,254,0.5)] ring-1 ring-cyan-400/50'
-                                            : 'bg-[#06132b]/85 border border-white/10 hover:border-blue-500/40'
-                                    }`}
-                                >
-                                    <div className="relative w-full h-32 sm:h-36 overflow-hidden bg-slate-900/80">
-                                        {prod.background_image ? (
-                                            <img src={prod.background_image} alt={prod.name} className="w-full h-full object-cover opacity-60 mix-blend-screen scale-105" />
+                                    {/* Product Floating Logo / Icon Badge */}
+                                    <div className="absolute -bottom-2 left-6 w-16 h-16 sm:w-18 sm:h-18 rounded-2xl flex items-center justify-center p-1.5 bg-gradient-to-tr from-[#1062FE] to-[#38bdf8] shadow-[0_10px_25px_rgba(0,0,0,0.6)] ring-2 ring-white/20 group-hover:scale-105 transition-transform">
+                                        {prod.logo ? (
+                                            <img
+                                                src={prod.logo}
+                                                alt={prod.name}
+                                                className="w-full h-full object-cover rounded-xl"
+                                            />
                                         ) : (
-                                            <div className="w-full h-full bg-gradient-to-br from-blue-900/40 via-cyan-900/20 to-transparent" />
+                                            <span className="text-3xl select-none">
+                                                {prod.icon || '🚀'}
+                                            </span>
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#061530]/40 to-[#061530]" />
-
-                                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center p-1 bg-gradient-to-tr from-blue-600 to-cyan-400 shadow-[0_8px_24px_rgba(0,0,0,0.5)] overflow-hidden ring-2 ring-white/20">
-                                            {prod.logo ? (
-                                                <img src={prod.logo} alt={prod.name} className="w-full h-full object-cover rounded-xl" />
-                                            ) : (
-                                                <span className="text-2xl font-black text-white">{prod.icon || prod.name?.charAt(0)}</span>
-                                            )}
-                                        </div>
                                     </div>
 
-                                    <div className="p-6 pt-3 flex flex-col flex-grow justify-between">
-                                        <div>
-                                            <h3 className="text-xl sm:text-2xl font-black text-white text-center tracking-tight mb-1">{prod.name}</h3>
-                                            <p className="text-xs sm:text-sm font-semibold text-[#38bdf8] text-center mb-3 line-clamp-1">{prod.tagline || 'Business Management System'}</p>
-                                            <p className="text-xs text-slate-300 text-center leading-relaxed mb-5 line-clamp-3 min-h-[3rem]">
-                                                {prod.desc || 'A complete management system designed to handle operations, billing, and workflows with ease.'}
+                                    {/* Live Badge */}
+                                    <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-[10px] font-bold text-emerald-400 tracking-wider uppercase">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                        READY TO DEPLOY
+                                    </div>
+                                </div>
+
+                                {/* Product Body Information */}
+                                <div className="p-6 sm:p-7 pt-4 flex flex-col flex-grow justify-between">
+                                    <div>
+                                        <h3 className="text-2xl font-black text-white tracking-tight mb-1 group-hover:text-[#38bdf8] transition-colors">
+                                            {prod.name}
+                                        </h3>
+                                        <p className="text-xs font-bold uppercase tracking-wider text-[#38bdf8] mb-3">
+                                            {prod.tagline || 'Business Management System'}
+                                        </p>
+                                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6 font-normal">
+                                            {prod.desc || 'A complete management system engineered to automate workflows, streamline billing, and accelerate operational growth.'}
+                                        </p>
+
+                                        {/* Core Features List */}
+                                        <div className="mb-6 space-y-2">
+                                            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                                Key Capabilities:
                                             </p>
-                                            <div className="grid grid-cols-2 gap-2 mb-6">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                 {feats.slice(0, 4).map((f, i) => (
-                                                    <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-medium text-slate-200 truncate">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                                                    <div
+                                                        key={i}
+                                                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-200"
+                                                    >
+                                                        <svg className="w-3.5 h-3.5 text-cyan-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                        </svg>
                                                         <span className="truncate">{f}</span>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
-
-                                        <Link
-                                            to={`/products/${prod.slug}`}
-                                            className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
-                                                isCenter
-                                                    ? 'bg-gradient-to-r from-[#1062FE] to-[#00b4d8] hover:from-[#0052E0] text-white shadow-[0_8px_20px_rgba(16,98,254,0.4)]'
-                                                    : 'bg-white/5 hover:bg-white/10 text-white border border-white/20'
-                                            }`}
-                                        >
-                                            <span>View Details</span>
-                                            <span>&rarr;</span>
-                                        </Link>
                                     </div>
-                                </motion.div>
-                            );
-                        })}
-                    </div>
 
-                    <button type="button" onClick={nextSlide} aria-label="Next" className="hidden sm:flex absolute right-2 lg:right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#051536]/80 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-[#1062FE] backdrop-blur-md items-center justify-center transition-all shadow-2xl z-40">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-                    </button>
+                                    {/* Action Button */}
+                                    <Link
+                                        to={`/products/${prod.slug}`}
+                                        className="w-full py-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-[#1062FE] to-[#00b4d8] hover:from-[#0052E0] text-white shadow-[0_8px_20px_rgba(16,98,254,0.35)] group-hover:shadow-[0_12px_28px_rgba(16,98,254,0.55)] active:scale-95 transition-all"
+                                    >
+                                        <span>Explore Product Details</span>
+                                        <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </Link>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
                 </div>
 
-                <div className="flex justify-center items-center gap-2 mt-6">
-                    {products.map((_, dotIdx) => (
-                        <button
-                            key={dotIdx}
-                            type="button"
-                            onClick={() => setCurrentIndex(dotIdx)}
-                            aria-label={`Go to slide ${dotIdx + 1}`}
-                            className={`transition-all duration-300 rounded-full ${
-                                dotIdx === currentIndex ? 'w-7 h-2 bg-[#1062FE] shadow-[0_0_10px_rgba(16,98,254,0.7)]' : 'w-2 h-2 bg-white/30 hover:bg-white/60'
-                            }`}
-                        />
-                    ))}
+                {/* Bottom Custom Software Request Banner */}
+                <div className="mt-14 rounded-3xl bg-gradient-to-r from-blue-900/30 via-indigo-950/40 to-blue-900/30 border border-blue-500/20 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+                    <div>
+                        <h4 className="text-lg sm:text-xl font-bold text-white mb-1">
+                            Need a Tailored System for Your Industry?
+                        </h4>
+                        <p className="text-xs sm:text-sm text-slate-300">
+                            We develop fully bespoke software solutions according to your exact business workflow.
+                        </p>
+                    </div>
+                    <a
+                        href="#contact"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs sm:text-sm shadow-lg whitespace-nowrap active:scale-95 transition-all"
+                    >
+                        <span>Request Custom Software</span>
+                        <span>&rarr;</span>
+                    </a>
                 </div>
             </div>
         </section>
