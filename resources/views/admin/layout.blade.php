@@ -27,8 +27,8 @@
     <aside class="w-64 min-h-screen bg-white/90 backdrop-blur-xl border-r border-slate-200/80 flex flex-col shrink-0 sticky top-0 h-screen z-50">
         {{-- Brand Logo --}}
         <div class="p-6 border-b border-slate-100 flex flex-col items-center text-center bg-slate-50/40">
-            <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-xl shadow-blue-500/15 ring-4 ring-white mb-2.5 text-blue-600">
-                <img src="/images/DSRZone logo.png" alt="DSRZone Logo" class="w-10 h-10 object-contain" />
+            <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-xl shadow-blue-500/15 ring-4 ring-white mb-2.5 text-blue-600 overflow-hidden">
+                <img src="/images/dsrzone-favicon.png" alt="DSRZone Logo" class="w-full h-full object-cover rounded-2xl" />
             </div>
             <div class="text-base font-black text-slate-900 tracking-tight leading-tight">DSRZone</div>
             <div class="text-[9px] font-extrabold text-blue-600 uppercase tracking-widest mt-1">Super Admin Portal</div>

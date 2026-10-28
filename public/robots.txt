@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /images/
+Allow: /build/
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://dsrzone.com/sitemap.xml

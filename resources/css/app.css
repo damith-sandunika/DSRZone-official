@@ -379,3 +379,12 @@ html {
         width: calc(1280px / 5);
     }
 }
+
+/* Hide scrollbars across all browsers */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

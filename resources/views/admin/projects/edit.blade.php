@@ -80,7 +80,14 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-slate-100">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-5 pt-4 border-t border-slate-100">
+                <div>
+                    <label for="accent_color" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Brand / Accent Color</label>
+                    <div class="flex items-center gap-2">
+                        <input type="color" id="accent_color_picker" value="{{ old('accent_color', $project->accent_color ?? '#0070f3') }}" class="w-10 h-10 rounded-lg cursor-pointer border border-slate-200 p-0.5 bg-white" onchange="document.getElementById('accent_color').value = this.value">
+                        <input type="text" name="accent_color" id="accent_color" value="{{ old('accent_color', $project->accent_color ?? '#0070f3') }}" placeholder="#0070f3" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm font-mono text-slate-800 focus:bg-white focus:border-blue-500 outline-none">
+                    </div>
+                </div>
                 <div>
                     <label for="map_city" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Map City Label</label>
                     <input type="text" name="map_city" id="map_city" value="{{ old('map_city', $project->map_city) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:border-blue-500 outline-none">

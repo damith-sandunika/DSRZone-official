@@ -2,270 +2,379 @@ import React, { useState, useEffect } from 'react';
 import axios from '../config/axios';
 import ScrollReveal from './ScrollReveal';
 import { imageUrl } from '../utils/imageUrl';
-import { motion, AnimatePresence } from 'framer-motion';
 
-/* ─── Fallback demo projects (admin panel eke data nathnam meka penenawa) ─── */
-const fallbackProjects = [
+// Curated default vibrant accent palette matching the user's reference design
+const DEFAULT_PALETTE = ['#0070f3', '#ff6b00', '#10b981', '#8b5cf6', '#06b6d4'];
+
+// Rich fallback projects matching the reference image perfectly if API has no data
+const FALLBACK_PROJECTS = [
     {
-        id: 1,
-        title: 'Smarty Menu — Digital Menu System',
-        category: 'Restaurant Tech',
-        client: 'The Garden Restaurant, Colombo',
-        problem: 'Customers waited too long to order; physical menus went missing and re-printing was costly.',
-        solution: 'We deployed a QR-based digital menu with real-time item updates, order tracking and a live kitchen dashboard. Order wait-time dropped by 40%.',
-        images: [],
-        project_url: null,
-        technologies: ['React', 'Laravel', 'MySQL', 'QR'],
+        id: 101,
+        title: 'Laundry Zone',
+        category: 'Laundry Services Management System',
+        client: 'Rapid Laundromat',
+        description: 'A complete management system for laundries to handle orders, customers, billing, inventory and delivery tracking with modern features.',
+        image: '/images/dsrzone-showcase-backdrop.jpg',
+        logo: '/images/dsrzone-laundry-system-icon.jpg',
+        accent_color: '#0070f3',
+        project_url: '#portfolio',
+        technologies: ['Order Management', 'Billing & Payments', 'Inventory Control', 'WhatsApp Notifications', 'Reports & Analytics'],
     },
     {
-        id: 2,
-        title: 'Inventory Pro — Stock Management',
-        category: 'Business Operations',
-        client: 'Lanka Pharma Distributors',
-        problem: 'Stock discrepancies caused daily losses; managers had no visibility into real-time inventory levels.',
-        solution: 'Built a real-time inventory dashboard with barcode scanning, expiry alerts and multi-branch syncing. Losses reduced by 60%.',
-        images: [],
-        project_url: null,
-        technologies: ['Vue', 'Node.js', 'PostgreSQL'],
+        id: 102,
+        title: 'Driving School',
+        category: 'Driving School Management System',
+        client: 'Sisira Driving Training School',
+        description: 'Manage students, classes, instructors, payments, schedules, exams and more with a simple and powerful system.',
+        image: '/images/dsrzone-enterprise-platform-showcase.jpg',
+        logo: '/images/dsrzone-smartdrive-app-icon.jpg',
+        accent_color: '#ff6b00',
+        project_url: '#portfolio',
+        technologies: ['Student Management', 'Slot Scheduling', 'Instructor Portals', 'Exam Booking', 'Billing System'],
     },
     {
-        id: 3,
-        title: 'EduPulse — Learning Management',
-        category: 'EdTech',
-        client: 'Institute of Technology, Kandy',
-        problem: 'No centralised platform for course materials, attendance, and student progress tracking.',
-        solution: 'Developed a full LMS with video lessons, quizzes, certificates and attendance reports — accessible on any device.',
-        images: [],
-        project_url: null,
-        technologies: ['React', 'Laravel', 'AWS S3'],
-    },
+        id: 103,
+        title: 'Smarty Menu',
+        category: 'Restaurant POS & Digital Menu',
+        client: 'The Garden Restaurant',
+        description: 'QR-based interactive digital menu system with real-time dish status, automated kitchen order routing, and live admin analytics.',
+        image: '/images/dsrzone-products-banner.jpg',
+        logo: null,
+        accent_color: '#10b981',
+        project_url: '#portfolio',
+        technologies: ['QR Ordering', 'Kitchen Display', 'Live Analytics', 'POS Sync'],
+    }
 ];
 
-/* ─── Image carousel ─────────────────────────────────────────────────────── */
-function ImageCarousel({ images, title }) {
-    const [idx, setIdx] = useState(0);
-    const hasImages = images && images.length > 0;
+/* ─── Individual Project Card matching user reference design ────────────── */
+function ProjectCard({ project, index }) {
+    // Dynamic Accent Color (From DB field or auto-cycled from palette)
+    const accentColor = project.accent_color && project.accent_color.startsWith('#')
+        ? project.accent_color
+        : DEFAULT_PALETTE[index % DEFAULT_PALETTE.length];
+
+    const projectLogo = project.logo ? imageUrl(project.logo) : null;
+    const projectImage = project.image ? imageUrl(project.image) : '/images/dsrzone-enterprise-platform-showcase.jpg';
 
     return (
-        <div className="relative w-full h-56 sm:h-64 overflow-hidden bg-[#0d1628] rounded-t-2xl flex-shrink-0">
-            {hasImages ? (
-                <>
-                    <AnimatePresence mode="wait">
-                        <motion.img
-                            key={idx}
-                            src={imageUrl(images[idx])}
-                            alt={`${title} screenshot ${idx + 1}`}
-                            className="absolute inset-0 w-full h-full object-cover object-top animate-autoscroll cursor-pointer"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.4 }}
-                        />
-                    </AnimatePresence>
-                    {images.length > 1 && (
-                        <>
-                            <button
-                                onClick={() => setIdx((i) => (i - 1 + images.length) % images.length)}
-                                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10"
+        <ScrollReveal delay={index * 100}>
+            <article className="group bg-white rounded-3xl lg:rounded-[36px] p-5 sm:p-7 lg:p-10 border border-slate-200/90 shadow-xl shadow-blue-500/5 hover:shadow-2xl hover:border-slate-300 transition-all duration-500 relative flex flex-col xl:flex-row items-center gap-6 sm:gap-8 lg:gap-10">
+                
+                {/* ════════════ LEFT / CONTENT SECTION ════════════ */}
+                <div className="w-full xl:w-[48%] flex flex-col justify-between self-stretch">
+                    
+                    <div>
+                        {/* 1. App Icon / Logo + Project Title & Category */}
+                        <div className="flex items-center gap-3.5 sm:gap-5">
+                            {/* App Icon Square */}
+                            <div
+                                className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 overflow-hidden relative"
+                                style={{
+                                    backgroundColor: accentColor,
+                                    boxShadow: `0 10px 25px -5px ${accentColor}50`
+                                }}
                             >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                            </button>
-                            <button
-                                onClick={() => setIdx((i) => (i + 1) % images.length)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                            </button>
-                            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                                {images.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setIdx(i)}
-                                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === idx ? 'bg-blue-400' : 'bg-white/30'}`}
+                                {projectLogo ? (
+                                    <img
+                                        src={projectLogo}
+                                        alt={project.title}
+                                        className="w-full h-full object-cover"
                                     />
+                                ) : (
+                                    <span className="text-xl sm:text-2xl font-black tracking-tight text-white font-mono">
+                                        {project.title?.charAt(0) || 'D'}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Title & Category */}
+                            <div className="min-w-0 flex-1">
+                                <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug truncate sm:whitespace-normal">
+                                    {project.title}
+                                </h3>
+                                <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5 truncate">
+                                    {project.category || 'Digital Management System'}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* 2. Description */}
+                        <p className="text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed mt-3.5 sm:mt-5 font-normal">
+                            {project.description || project.solution || 'Custom enterprise software designed and deployed to streamline operations and accelerate business growth.'}
+                        </p>
+
+                        {/* 3. Key Features / Tech Stack Pills */}
+                        {Array.isArray(project.technologies) && project.technologies.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3.5 sm:mt-4 pt-3.5 border-t border-slate-100">
+                                {project.technologies.slice(0, 4).map((tech, i) => (
+                                    <span
+                                        key={i}
+                                        className="px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold bg-slate-50 border border-slate-200/80 text-slate-700"
+                                    >
+                                        {tech}
+                                    </span>
                                 ))}
                             </div>
-                        </>
-                    )}
-                </>
-            ) : (
-                /* Placeholder */
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-[#0a0c12]">
-                    <svg className="w-16 h-16 text-blue-500/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                </div>
-            )}
-        </div>
-    );
-}
-
-/* ─── Project card ───────────────────────────────────────────────────────── */
-function ProjectCard({ project, index }) {
-    const imgs = Array.isArray(project.images) ? project.images
-        : project.image ? [project.image] : [];
-    
-    // Alternate layout: Even index -> Image Right, Text Left. Odd index -> Image Left, Text Right.
-    const isEven = index % 2 === 0;
-
-    return (
-        <ScrollReveal delay={100}>
-            <article className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center bg-[#0a0c12]/40 backdrop-blur-md rounded-3xl p-6 lg:p-10 border border-white/5 hover:border-blue-500/20 transition-all shadow-2xl relative overflow-hidden group">
-                
-                {/* Image Section */}
-                <div className={`w-full lg:w-1/2 flex-shrink-0 relative rounded-2xl overflow-hidden shadow-2xl border border-white/5 ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
-                     <ImageCarousel images={imgs} title={project.title} />
-                     <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                </div>
-
-                {/* Content Section */}
-                <div className={`w-full lg:w-1/2 flex flex-col gap-6 ${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
-                    <div>
-                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-blue-400 mb-2 sm:mb-3 block">
-                            {project.category || 'Project'}
-                        </span>
-                        <h3 className="text-2xl lg:text-3xl font-extrabold text-white leading-tight">{project.title}</h3>
-                    </div>
-
-                    {project.client && (
-                        <div className="flex items-center gap-2 text-sm text-slate-400 font-medium -mt-2">
-                            <svg className="w-4 h-4 text-blue-400/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            {project.client}
-                        </div>
-                    )}
-
-                    {/* Problem / Solution */}
-                    <div className="flex flex-col gap-4 mt-2">
-                        {/* Problem */}
-                        <div className="rounded-2xl bg-[#130b0b]/60 border border-red-500/10 p-5">
-                            <div className="flex items-center gap-2 mb-2.5">
-                                <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
-                                    <svg className="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </span>
-                                <p className="text-xs font-bold uppercase tracking-widest text-red-400/90">Problem</p>
-                            </div>
-                            <p className="text-slate-400 text-sm leading-relaxed">
-                                {project.problem || project.description || 'Client faced operational challenges that slowed down daily workflows.'}
-                            </p>
-                        </div>
-
-                        {/* Solution */}
-                        <div className="rounded-2xl bg-[#08101a]/60 border border-blue-500/10 p-5">
-                            <div className="flex items-center gap-2 mb-2.5">
-                                <span className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
-                                    <svg className="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </span>
-                                <p className="text-xs font-bold uppercase tracking-widest text-blue-400/90">Our Solution</p>
-                            </div>
-                            <p className="text-slate-300 text-sm leading-relaxed">
-                                {project.solution || 'We delivered a custom digital system tailored to their specific needs.'}
-                            </p>
-                        </div>
-                    </div>
-
-                    {Array.isArray(project.technologies) && project.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                            {project.technologies.map((t, i) => (
-                                <span key={i} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-medium">{t}</span>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Footer row */}
-                    <div className="flex items-center justify-between mt-2">
-                        {project.project_url && (
-                            <a
-                                href={project.project_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm font-semibold text-slate-400 hover:text-white transition-colors flex items-center gap-1.5"
-                            >
-                                Visit site
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                            </a>
                         )}
                     </div>
+
+                    {/* 4. Client Info (Desktop Only - Left Column Bottom) */}
+                    <div className="hidden xl:flex items-center gap-3 mt-6 pt-4 border-t border-slate-100">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            <span>Client:</span>
+                        </div>
+                        <span className="text-sm font-extrabold text-slate-800 tracking-tight">
+                            {project.client || 'Enterprise Partner'}
+                        </span>
+                    </div>
+
                 </div>
+
+                {/* ════════════ CENTER / IMAGE SECTION WITH STYLIZED ANGLED FRAME ════════════ */}
+                <div className="w-full xl:w-[38%] flex items-center justify-center relative p-1 sm:p-2">
+                    <div className="relative w-full max-w-[460px] group/frame">
+                        
+                        {/* Stylized Angled / Ribbon Frame Accent around the bottom-right corner */}
+                        <div
+                            className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 w-[72%] h-[72%] rounded-3xl pointer-events-none transition-transform duration-500 group-hover/frame:translate-x-1.5 group-hover/frame:translate-y-1.5"
+                            style={{
+                                background: `linear-gradient(135deg, transparent 35%, ${accentColor} 35%)`,
+                                borderBottom: `4px solid ${accentColor}`,
+                                borderRight: `4px solid ${accentColor}`,
+                                borderRadius: '26px'
+                            }}
+                        />
+
+                        {/* Laptop / Screen Mockup Frame */}
+                        <div className="relative z-10 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 border-2 border-white shadow-2xl">
+                            <img
+                                src={projectImage}
+                                alt={project.title}
+                                className="w-full h-44 sm:h-60 lg:h-64 object-cover object-top transition-transform duration-700 group-hover/frame:scale-105"
+                            />
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* ════════════ RIGHT SECTION: DESKTOP-ONLY CLIENT & LIVE PROJECT BUTTON ════════════ */}
+                <div className="hidden xl:flex w-[14%] flex-col items-start justify-center gap-4 pl-6 border-l border-slate-100">
+                    
+                    {/* Client Logo / Brand Block */}
+                    <div className="flex flex-col items-start text-left">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            <span>Client</span>
+                        </div>
+                        <div className="text-base font-black text-slate-900 leading-tight">
+                            {project.client || 'Enterprise'}
+                        </div>
+                    </div>
+
+                    {/* Live Project CTA Button */}
+                    <a
+                        href={project.project_url || '#portfolio'}
+                        target={project.project_url && project.project_url !== '#portfolio' ? '_blank' : '_self'}
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-white font-bold text-xs sm:text-sm shadow-lg transition-all duration-300 hover:opacity-90 hover:shadow-xl w-full text-center"
+                        style={{
+                            backgroundColor: accentColor,
+                            boxShadow: `0 10px 20px -5px ${accentColor}60`
+                        }}
+                    >
+                        <span>Live Project</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+
+                </div>
+
+                {/* ════════════ MOBILE / TABLET ONLY BOTTOM BAR (CLEAN & NON-DUPLICATED) ════════════ */}
+                <div className="flex xl:hidden w-full flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100">
+                    
+                    {/* Client Name on Mobile */}
+                    <div className="flex items-center gap-2 self-start sm:self-center">
+                        <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Client:</span>
+                        <span className="text-xs sm:text-sm font-extrabold text-slate-800">
+                            {project.client || 'Enterprise Partner'}
+                        </span>
+                    </div>
+
+                    {/* Live Project Button on Mobile */}
+                    <a
+                        href={project.project_url || '#portfolio'}
+                        target={project.project_url && project.project_url !== '#portfolio' ? '_blank' : '_self'}
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl sm:rounded-2xl text-white font-bold text-xs sm:text-sm shadow-md transition-all duration-300 hover:opacity-95 w-full sm:w-auto text-center"
+                        style={{
+                            backgroundColor: accentColor,
+                            boxShadow: `0 8px 16px -4px ${accentColor}50`
+                        }}
+                    >
+                        <span>Live Project</span>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+
+                </div>
+
             </article>
         </ScrollReveal>
     );
 }
 
-/* ─── Main Portfolio component ───────────────────────────────────────────── */
-const INITIAL_COUNT = 5; // Top 5 main projects as requested
-
-function Portfolio() {
+export default function Portfolio() {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('/api/v1/projects?limit=6')
-            .then((res) => setProjects(Array.isArray(res.data) ? res.data : []))
-            .catch(() => setProjects([]))
+        axios.get('/api/v1/projects')
+            .then((res) => {
+                const apiData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+                if (apiData.length > 0) {
+                    setProjects(apiData);
+                } else {
+                    setProjects(FALLBACK_PROJECTS);
+                }
+            })
+            .catch(() => setProjects(FALLBACK_PROJECTS))
             .finally(() => setLoading(false));
     }, []);
 
-    // Only display 5 projects here. The rest will go to a separate Products page.
-    const visible = projects.slice(0, INITIAL_COUNT);
-    const hasMore = projects.length > INITIAL_COUNT;
+    const displayList = projects.length > 0 ? projects : FALLBACK_PROJECTS;
 
     return (
-        <section id="portfolio" className="py-20 sm:py-28 bg-[#030610] border-t border-white/5 relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute top-1/4 right-0 w-[500px] h-[500px] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-1/4 left-0 w-[600px] h-[600px] rounded-full bg-blue-400/5 blur-[120px] pointer-events-none" />
-            <div className="absolute inset-0 bg-[url('/images/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-5 pointer-events-none" />
+        <section
+            id="portfolio"
+            className="py-16 sm:py-24 lg:py-28 bg-[#f8fbff] text-slate-900 relative overflow-hidden border-t border-slate-200/60"
+        >
+            {/* ─── FLUID CYBER-WAVE BACKGROUND PATTERNS MATCHING REFERENCE ─── */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                
+                {/* Top-Left Soft Cyan Wave */}
+                <div
+                    className="absolute -top-24 -left-24 w-[450px] sm:w-[500px] h-[450px] sm:h-[500px] rounded-full opacity-35 sm:opacity-40 blur-[80px] sm:blur-[90px]"
+                    style={{ background: 'radial-gradient(circle, #38bdf8 0%, rgba(56,189,248,0) 70%)' }}
+                />
+
+                {/* Bottom-Right Soft Blue Wave */}
+                <div
+                    className="absolute -bottom-28 -right-28 w-[500px] sm:w-[600px] h-[500px] sm:h-[600px] rounded-full opacity-30 sm:opacity-35 blur-[90px] sm:blur-[100px]"
+                    style={{ background: 'radial-gradient(circle, #0070f3 0%, rgba(0,112,243,0) 70%)' }}
+                />
+
+                {/* Left Dot Matrix Pattern */}
+                <div
+                    className="absolute top-1/3 left-4 sm:left-12 w-24 sm:w-32 h-24 sm:h-32 opacity-20 sm:opacity-25"
+                    style={{
+                        backgroundImage: 'radial-gradient(#0070f3 1.5px, transparent 1.5px)',
+                        backgroundSize: '16px 16px'
+                    }}
+                />
+
+                {/* Right Dot Matrix Pattern */}
+                <div
+                    className="absolute bottom-1/4 right-4 sm:right-12 w-28 sm:w-36 h-28 sm:h-36 opacity-20 sm:opacity-25"
+                    style={{
+                        backgroundImage: 'radial-gradient(#0070f3 1.5px, transparent 1.5px)',
+                        backgroundSize: '16px 16px'
+                    }}
+                />
+            </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                {/* Heading */}
+                
+                {/* ─── SECTION HEADING: PERFECTLY CENTERED ON MOBILE, LEFT-ALIGNED ON DESKTOP ─── */}
                 <ScrollReveal>
-                    <div className="text-center mb-16 sm:mb-24">
-                        <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-blue-400/90 mb-3">Our Work</p>
-                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-300">Portfolio</span>
-                        </h2>
-                        <p className="mt-6 text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-                            Real problems. Real solutions. See how we've transformed businesses across Sri Lanka with our premium digital systems.
-                        </p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-16 gap-6">
+                        
+                        {/* Title Section - Perfectly Centered on Mobile, Left-Aligned on Desktop */}
+                        <div className="w-full max-w-2xl flex flex-col items-center md:items-start text-center md:text-left mx-auto md:mx-0">
+                            
+                            {/* Centered Top Tag on Mobile with dual divider lines */}
+                            <div className="inline-flex items-center justify-center md:justify-start gap-2.5 mb-3">
+                                <span className="w-6 h-[2px] bg-blue-600 rounded-full" />
+                                <span className="text-xs sm:text-sm font-extrabold tracking-[0.2em] uppercase text-blue-600 font-mono">
+                                    OUR PROJECTS
+                                </span>
+                                <span className="w-6 h-[2px] bg-blue-600 rounded-full md:hidden" />
+                            </div>
+
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15] text-center md:text-left">
+                                Real Projects <br className="hidden sm:inline" />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500">
+                                    Real Growth
+                                </span>
+                            </h2>
+
+                            <p className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-600 font-normal leading-relaxed text-center md:text-left max-w-xl mx-auto md:mx-0">
+                                We build digital solutions that help businesses operate better and grow faster.
+                            </p>
+                        </div>
+
+                        {/* Top-Right Callout Script & Arrows (Desktop only) */}
+                        <div className="hidden md:flex flex-col items-end shrink-0">
+                            <div className="flex items-center gap-2.5 mb-2">
+                                <a
+                                    href="#portfolio"
+                                    className="w-10 h-10 rounded-full border border-blue-200 bg-white shadow-sm flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors"
+                                    aria-label="Previous"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+                                </a>
+                                <a
+                                    href="#portfolio"
+                                    className="w-10 h-10 rounded-full border border-blue-200 bg-white shadow-sm flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors"
+                                    aria-label="Next"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                </a>
+                            </div>
+
+                            {/* Handwritten Style Annotation */}
+                            <div className="text-right">
+                                <span className="font-serif italic text-base sm:text-lg font-bold text-blue-600 block leading-tight rotate-[-3deg]">
+                                    Turning Ideas into Real Solutions
+                                </span>
+                                <svg className="w-6 h-6 text-blue-500 ml-auto mt-0.5 transform rotate-[-25deg]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                </svg>
+                            </div>
+                        </div>
+
                     </div>
                 </ScrollReveal>
 
+                {/* ─── STACKED PROJECT CARDS (YATA YATA) ─── */}
                 {loading ? (
-                    <div className="flex flex-col gap-12">
-                        {[1,2,3].map(i => (
-                            <div key={i} className="rounded-3xl bg-[#0c1221]/50 border border-white/5 h-[500px] animate-pulse" />
+                    <div className="flex flex-col gap-6 sm:gap-10">
+                        {[1, 2].map((i) => (
+                            <div key={i} className="rounded-3xl bg-white border border-slate-200 h-64 sm:h-72 animate-pulse shadow-md" />
                         ))}
                     </div>
                 ) : (
-                    <>
-                        <div className="flex flex-col gap-12 sm:gap-20">
-                            {visible.map((project, i) => (
-                                <ProjectCard key={project.id} project={project} index={i} />
-                            ))}
-                        </div>
-
-                        {hasMore && (
-                            <div className="text-center mt-20">
-                                <a
-                                    href="/products"
-                                    className="inline-flex items-center gap-3 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 font-semibold px-8 py-3.5 hover:bg-blue-600/20 hover:border-blue-400 transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]"
-                                >
-                                    View All Products
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                </a>
-                            </div>
-                        )}
-                    </>
+                    <div className="flex flex-col gap-6 sm:gap-10">
+                        {displayList.map((project, idx) => (
+                            <ProjectCard
+                                key={project.id || idx}
+                                project={project}
+                                index={idx}
+                            />
+                        ))}
+                    </div>
                 )}
+
             </div>
         </section>
     );
 }
-
-export default Portfolio;

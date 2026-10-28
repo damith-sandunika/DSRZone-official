@@ -39,6 +39,7 @@ class ProjectResource extends JsonResource
             'map_x' => $this->map_x,
             'map_y' => $this->map_y,
             'map_city' => $this->map_city,
+            'accent_color' => $this->accent_color,
         ];
     }
 }

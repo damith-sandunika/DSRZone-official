@@ -34,6 +34,7 @@ class ProjectFormRequest extends FormRequest
             'map_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'map_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'map_city' => ['nullable', 'string', 'max:100'],
+            'accent_color' => ['nullable', 'string', 'max:30'],
         ];
     }
 }

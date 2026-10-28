@@ -153,7 +153,6 @@ export default function Services() {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
     const timerRef = useRef(null);
     const ROTATION_INTERVAL = 6000;
 
@@ -182,7 +181,7 @@ export default function Services() {
     }, [total]);
 
     useEffect(() => {
-        if (total <= 1 || isPaused) return;
+        if (total <= 1) return;
 
         timerRef.current = setInterval(() => {
             handleNext();
@@ -191,7 +190,7 @@ export default function Services() {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
-    }, [total, isPaused, handleNext, activeIndex]);
+    }, [total, handleNext, activeIndex]);
 
     const currentService = services[activeIndex] || services[0] || FALLBACK_SERVICES[0];
 
@@ -207,8 +206,6 @@ export default function Services() {
         <section
             id="services"
             className="relative py-16 sm:py-20 lg:py-28 overflow-hidden bg-[#f4f7fb] text-slate-800 transition-colors duration-500"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
         >
             {/* Ambient Lighting & Blueprint Accents */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -227,12 +224,13 @@ export default function Services() {
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
 
                 {/* ── SECTION HEADER ─────────────────────────────── */}
-                <div className="max-w-3xl mb-8 sm:mb-12 lg:mb-16 text-center sm:text-left">
-                    <div className="inline-flex items-center gap-2.5 mb-3">
+                <div className="max-w-3xl mb-8 sm:mb-12 lg:mb-16 text-center sm:text-left mx-auto sm:mx-0">
+                    <div className="inline-flex items-center justify-center sm:justify-start gap-2.5 mb-3">
                         <span className="w-6 h-[2px] bg-blue-600 rounded-full" />
                         <span className="text-xs sm:text-sm font-extrabold tracking-[0.2em] uppercase text-blue-600 font-mono">
                             OUR SERVICES
                         </span>
+                        <span className="w-6 h-[2px] bg-blue-600 rounded-full sm:hidden" />
                     </div>
 
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
@@ -240,7 +238,7 @@ export default function Services() {
                         for Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600">Growth</span>
                     </h2>
 
-                    <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl">
+                    <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto sm:mx-0">
                         We provide end-to-end digital solutions to help businesses build, automate and grow with modern technology.
                     </p>
                 </div>
@@ -331,6 +329,17 @@ export default function Services() {
                                     </div>
                                 </motion.div>
                             </AnimatePresence>
+
+                            {/* Bottom Animated Blue Loading Progress Line */}
+                            <div className="absolute inset-x-0 bottom-0 h-1 bg-slate-100 overflow-hidden z-20">
+                                <motion.div
+                                    key={`mob-line-${activeIndex}`}
+                                    initial={{ width: '0%' }}
+                                    animate={{ width: '100%' }}
+                                    transition={{ duration: ROTATION_INTERVAL / 1000, ease: 'linear' }}
+                                    className="h-full bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 shadow-[0_0_8px_rgba(37,99,235,0.8)]"
+                                />
+                            </div>
                         </div>
 
                         {/* Right-Side Numbered Buttons Rail (1, 2, 3, 4, 5 ONLY) */}
@@ -592,6 +601,17 @@ export default function Services() {
                                         </a>
                                     </motion.div>
                                 </AnimatePresence>
+                            </div>
+
+                            {/* Bottom Animated Blue Loading Progress Line */}
+                            <div className="absolute inset-x-0 bottom-0 h-1.5 bg-slate-100 overflow-hidden z-30">
+                                <motion.div
+                                    key={`desk-line-${activeIndex}`}
+                                    initial={{ width: '0%' }}
+                                    animate={{ width: '100%' }}
+                                    transition={{ duration: ROTATION_INTERVAL / 1000, ease: 'linear' }}
+                                    className="h-full bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 shadow-[0_0_10px_rgba(37,99,235,0.8)]"
+                                />
                             </div>
 
                         </div>

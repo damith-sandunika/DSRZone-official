@@ -28,6 +28,7 @@ class Project extends Model
         'map_x',
         'map_y',
         'map_city',
+        'accent_color',
     ];
 
     protected $casts = [

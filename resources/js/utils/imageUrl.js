@@ -6,7 +6,15 @@
 export function imageUrl(value) {
     if (!value || typeof value !== 'string') return '';
     const v = value.trim();
-    if (v.startsWith('http://') || v.startsWith('https://')) return v;
+    if (v.startsWith('http://') || v.startsWith('https://')) {
+        // If image URL has hardcoded localhost or 127.0.0.1 from local dev/seeder,
+        // rewrite host to current window.location.origin so mobile/remote devices load it!
+        if (typeof window !== 'undefined' && (v.includes('localhost') || v.includes('127.0.0.1'))) {
+            const path = v.replace(/^https?:\/\/[^\/]+/, '');
+            return `${window.location.origin}${path}`;
+        }
+        return v;
+    }
     const path = v.startsWith('/') ? v : `/${v}`;
     return typeof window !== 'undefined' ? `${window.location.origin}${path}` : path;
 }

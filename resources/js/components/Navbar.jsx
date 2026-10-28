@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-            const sections = ['home', 'about', 'products', 'services', 'portfolio', 'process', 'contact'];
+            // Transparent when in hero section (scrollY < 50), deep black when scrolled down
+            setIsScrolled(window.scrollY > 40);
+
+            const sections = ['home', 'about', 'products', 'services', 'portfolio', 'testimonials', 'contact'];
             const scrollPos = window.scrollY + 200;
             for (const section of sections) {
                 const el = document.getElementById(section);
@@ -23,47 +28,109 @@ function Navbar() {
                 }
             }
         };
+
         window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Scroll to section accounting for fixed navbar height offset
+    const scrollToSection = (sectionId) => {
+        if (!sectionId || sectionId === 'home') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setActiveSection('home');
+            return;
+        }
+
+        const targetEl = document.getElementById(sectionId);
+        if (targetEl) {
+            const headerOffset = 72;
+            const elementPosition = targetEl.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: Math.max(0, offsetPosition),
+                behavior: 'smooth'
+            });
+            setActiveSection(sectionId);
+        }
+    };
+
+    // Auto-scroll when navigating to an anchor from another page or direct URL
+    useEffect(() => {
+        if (location.pathname === '/' && location.hash) {
+            const targetId = location.hash.replace('#', '');
+            const timer = setTimeout(() => {
+                scrollToSection(targetId);
+            }, 250);
+            return () => clearTimeout(timer);
+        }
+    }, [location.pathname, location.hash]);
+
     const navLinks = [
-        { label: 'Home', href: '#home', id: 'home' },
-        { label: 'About', href: '#about', id: 'about' },
-        { label: 'Products', href: '#products', id: 'products' },
-        { label: 'Services', href: '#services', id: 'services' },
-        { label: 'Our Work', href: '#portfolio', id: 'portfolio' },
-        { label: 'Contact', href: '#contact', id: 'contact' },
+        { label: 'Home', href: '/#home', id: 'home' },
+        { label: 'About', href: '/#about', id: 'about' },
+        { label: 'Products', href: '/#products', id: 'products' },
+        { label: 'Services', href: '/#services', id: 'services' },
+        { label: 'Our Work', href: '/#portfolio', id: 'portfolio' },
+        { label: 'Reviews', href: '/#testimonials', id: 'testimonials' },
+        { label: 'Contact', href: '/#contact', id: 'contact' },
     ];
+
+    const handleLinkClick = (e, link) => {
+        e.preventDefault();
+        const wasMobileOpen = isMobileMenuOpen;
+        setIsMobileMenuOpen(false);
+
+        if (location.pathname !== '/') {
+            navigate(`/#${link.id}`);
+            return;
+        }
+
+        // On mobile, short timeout guarantees the closing drawer animation does not cancel smooth scroll
+        if (wasMobileOpen) {
+            setTimeout(() => {
+                scrollToSection(link.id);
+            }, 100);
+        } else {
+            scrollToSection(link.id);
+        }
+    };
 
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
             isMobileMenuOpen 
-                ? 'bg-[#030712]/95 backdrop-blur-xl border-b border-white/10 py-3' 
+                ? 'bg-[#02050e]/98 backdrop-blur-2xl border-b border-white/10 py-3' 
                 : isScrolled
-                    ? 'bg-black/30 backdrop-blur-md border-b border-white/5 py-3.5'
+                    ? 'bg-[#02050e]/95 backdrop-blur-xl border-b border-white/10 py-3 sm:py-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.85)]'
                     : 'bg-transparent border-transparent py-5 sm:py-6'
         }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 {/* Brand Logo */}
-                <a href="#home" className="flex items-center gap-3 group">
+                <a
+                    href="/#home"
+                    onClick={(e) => handleLinkClick(e, { id: 'home', href: '/#home' })}
+                    className="flex items-center gap-3 group"
+                >
                     <img
-                        src="/images/DSRZone logo.png"
-                        alt="DSRZone - Born to Innovate"
+                        src="/images/dsrzone-official-logo.png"
+                        alt="DSRZone (DSR) – Software & IT Solutions Sri Lanka"
+                        title="DSRZone – Born to Innovate"
                         className="h-9 sm:h-11 w-auto object-contain transition-transform group-hover:scale-105"
                     />
                 </a>
 
                 {/* Desktop Nav Links */}
-                <nav className="hidden md:flex items-center gap-8">
+                <nav className="hidden lg:flex items-center gap-7">
                     {navLinks.map((link) => {
                         const isActive = activeSection === link.id;
                         return (
                             <a
                                 key={link.label}
                                 href={link.href}
-                                className={`text-sm font-medium transition-all relative py-1 ${
-                                    isActive ? 'text-white font-semibold' : 'text-slate-300 hover:text-white'
+                                onClick={(e) => handleLinkClick(e, link)}
+                                className={`text-sm font-semibold transition-all relative py-1 cursor-pointer ${
+                                    isActive ? 'text-white' : 'text-slate-300 hover:text-white'
                                 }`}
                             >
                                 {link.label}
@@ -79,10 +146,11 @@ function Navbar() {
                 </nav>
 
                 {/* Desktop Right CTA Button */}
-                <div className="hidden md:flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4">
                     <a
-                        href="#contact"
-                        className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-[#1062FE] hover:bg-[#0052E0] text-white font-semibold text-sm shadow-[0_0_20px_rgba(16,98,254,0.4)] hover:shadow-[0_0_30px_rgba(16,98,254,0.65)] hover:-translate-y-0.5 transition-all"
+                        href="/#contact"
+                        onClick={(e) => handleLinkClick(e, { id: 'contact', href: '/#contact' })}
+                        className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-[#1062FE] hover:bg-[#0052E0] text-white font-bold text-sm shadow-[0_0_20px_rgba(16,98,254,0.4)] hover:shadow-[0_0_30px_rgba(16,98,254,0.65)] hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer"
                     >
                         <span>Let's Talk</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +163,7 @@ function Navbar() {
                 <button
                     type="button"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="md:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10"
+                    className="lg:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 cursor-pointer"
                     aria-label="Toggle navigation menu"
                 >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,15 +183,15 @@ function Navbar() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden border-t border-white/10 bg-[#030712]/98 backdrop-blur-2xl px-6 py-5 overflow-hidden"
+                        className="lg:hidden border-t border-white/10 bg-[#02050e]/98 backdrop-blur-2xl px-6 py-5 overflow-hidden"
                     >
                         <div className="flex flex-col gap-3">
                             {navLinks.map((link) => (
                                 <a
                                     key={link.label}
                                     href={link.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`py-2 text-base font-semibold transition-colors ${
+                                    onClick={(e) => handleLinkClick(e, link)}
+                                    className={`py-2 text-base font-semibold transition-colors cursor-pointer ${
                                         activeSection === link.id ? 'text-[#38bdf8]' : 'text-slate-300 hover:text-white'
                                     }`}
                                 >
@@ -131,9 +199,9 @@ function Navbar() {
                                 </a>
                             ))}
                             <a
-                                href="#contact"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="mt-2 text-center py-3 rounded-full bg-[#1062FE] text-white font-bold text-sm shadow-[0_0_20px_rgba(16,98,254,0.4)]"
+                                href="/#contact"
+                                onClick={(e) => handleLinkClick(e, { id: 'contact', href: '/#contact' })}
+                                className="mt-2 text-center py-3 rounded-full bg-[#1062FE] text-white font-bold text-sm shadow-[0_0_20px_rgba(16,98,254,0.4)] cursor-pointer"
                             >
                                 Let's Talk &rarr;
                             </a>

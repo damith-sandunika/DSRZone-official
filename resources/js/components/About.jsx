@@ -47,14 +47,52 @@ function About() {
     return (
         <section id="about" className="relative w-full overflow-hidden bg-white text-slate-800">
 
-            {/* ── AMBIENT GEOMETRIC SLICES & ACCENTS ── */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* ── ENHANCED AMBIENT GEOMETRIC BACKGROUND & FLOATING SHAPES ── */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+                
+                {/* 1. Soft Ambient Sky & Blue Radial Glows */}
                 <div
-                    className="absolute -top-20 left-1/3 w-[600px] h-[750px] bg-gradient-to-br from-blue-100/60 via-sky-100/40 to-transparent transform -skew-x-12 blur-2xl"
+                    className="absolute -top-24 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-100/60 via-sky-100/40 to-transparent rounded-full blur-3xl"
                 />
                 <div
-                    className="hidden lg:block absolute top-0 left-[40%] w-[320px] h-[600px] bg-gradient-to-b from-blue-500/10 to-transparent transform -skew-x-12"
+                    className="absolute -bottom-24 right-10 w-[550px] h-[550px] bg-gradient-to-tl from-cyan-100/50 via-blue-50/30 to-transparent rounded-full blur-3xl"
                 />
+                <div
+                    className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-blue-400/10 rounded-full blur-2xl"
+                />
+
+                {/* 2. Floating Concentric Circles (Top Left) */}
+                <div className="absolute -top-10 -left-10 w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-blue-400/20 border-dashed animate-[spin_120s_linear_infinite]" />
+                <div className="absolute top-8 left-8 w-20 h-20 rounded-full border border-sky-400/25" />
+
+                {/* 3. Dot Matrix Pattern (Left Side) */}
+                <div className="absolute top-1/4 left-4 sm:left-10 grid grid-cols-4 gap-2.5 opacity-25">
+                    {[...Array(16)].map((_, i) => (
+                        <span key={i} className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                    ))}
+                </div>
+
+                {/* 4. Floating Rotated Diamonds & Rectangles (Right Side) */}
+                <div className="absolute top-16 right-6 sm:right-16 w-12 h-12 rounded-xl border-2 border-blue-400/25 rotate-45" />
+                <div className="absolute top-36 right-20 sm:right-32 w-6 h-6 rounded-lg border border-cyan-500/30 rotate-12" />
+
+                {/* 5. Angled Pill Accent Streaks */}
+                <div className="absolute bottom-28 left-6 sm:left-14 w-28 h-2 rounded-full bg-gradient-to-r from-blue-500/20 to-transparent -rotate-45" />
+                <div className="absolute top-24 right-1/4 w-24 h-1.5 rounded-full bg-gradient-to-r from-sky-400/25 to-transparent rotate-12" />
+
+                {/* 6. Subtle Cyber Tech Crosshairs (+) */}
+                <span className="absolute top-20 left-1/3 text-blue-400/35 font-mono text-xl font-light">+</span>
+                <span className="absolute bottom-32 left-1/4 text-sky-400/30 font-mono text-lg font-light">+</span>
+                <span className="absolute top-40 right-1/3 text-blue-500/30 font-mono text-xl font-light">+</span>
+                <span className="absolute bottom-20 right-1/4 text-cyan-400/35 font-mono text-lg font-light">+</span>
+
+                {/* 7. Corner Architectural L-Brackets */}
+                <svg className="absolute bottom-12 right-8 sm:right-14 w-7 h-7 text-blue-400/20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M19 14v5a1 1 0 01-1 1h-5" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <svg className="absolute top-10 left-1/2 w-6 h-6 text-sky-400/20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M5 10V5a1 1 0 011-1h5" strokeWidth="2" strokeLinecap="round" />
+                </svg>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 lg:py-0">
@@ -69,9 +107,9 @@ function About() {
                    ════════════════════════════════════════════════════════════ */}
                 <div className="flex flex-col lg:hidden items-center text-center">
 
-                    {/* 1. Header (Centered) */}
-                    <div className="text-center mb-6">
-                        <div className="inline-flex items-center justify-center gap-2 mb-3">
+                    {/* 1. Header (Centered with Subtitle Description matching other sections) */}
+                    <div className="text-center mb-8 max-w-xl mx-auto">
+                        <div className="inline-flex items-center justify-center gap-2 mb-2.5">
                             <span className="w-6 h-[2px] bg-[#0062fe] rounded-full" />
                             <span className="text-xs sm:text-sm font-extrabold tracking-[0.2em] uppercase text-[#0062fe] font-mono">
                                 ABOUT US
@@ -80,27 +118,34 @@ function About() {
                         </div>
 
                         <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-[1.15]">
-                            Turning Ideas <br />
-                            Into <span className="text-[#0062fe]">Real Solutions</span>
+                            Architects Of <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600">Digital Innovation</span>
                         </h2>
+
+                        <p className="mt-2.5 text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-lg mx-auto">
+                            Passionate engineers and designers dedicated to building high-performance digital platforms and custom software that drive business growth.
+                        </p>
                     </div>
 
-                    {/* 2. Founder Photo inside Architectural Arch (Centered) */}
-                    <div className="relative w-full max-w-[320px] sm:max-w-[360px] flex items-end justify-center pt-8 mb-6">
-                        {/* Rounded Architectural Window Arch with Modern Office Backdrop */}
-                        <div className="absolute inset-x-4 bottom-0 top-0 rounded-t-[140px] rounded-b-[32px] overflow-hidden border-2 border-white shadow-[0_20px_45px_rgba(0,0,0,0.12)]">
+                    {/* 2. Founder Photo inside Architectural Arch (Enlarged for Mobile View) */}
+                    <div className="relative w-full max-w-[345px] sm:max-w-[395px] flex items-end justify-center pt-14 sm:pt-16 mb-7">
+                        {/* Architectural Window Arch Backdrop */}
+                        <div className="absolute inset-x-5 sm:inset-x-7 bottom-0 top-12 sm:top-14 rounded-t-[125px] rounded-b-[32px] overflow-hidden border-2 border-white shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
                             <img
-                                src="/images/founder_office_inner.jpg"
-                                alt="Modern Office Interior"
-                                className="absolute inset-0 w-full h-full object-cover"
+                                src="/images/dsrzone-founder-office-workspace.jpg"
+                                alt="DSRZone Modern Tech Office Workspace"
+                                title="DSRZone Office Headquarters"
+                                className="absolute inset-0 w-full h-full object-cover opacity-35 filter brightness-105 contrast-90"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-sky-100/20" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/10 via-white/45 to-sky-100/40" />
                         </div>
 
+                        {/* Founder Photo - Head and shoulders rise ABOVE the top of the background arch! */}
                         <img
-                            src="/images/DamithSandunika.png"
-                            alt="Damith Sandunika - Founder & CEO of DSRZone"
-                            className="relative z-10 w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.28)] select-none -mb-1"
+                            src="/images/dsrzone-founder-damith-sandunika.png"
+                            alt="Damith Sandunika – Founder & Lead Software Architect at DSRZone (DSR)"
+                            title="Damith Sandunika – Founder of DSRZone"
+                            className="relative z-10 w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.28)] select-none -mb-1 transform scale-[1.03] transition-transform duration-300"
                         />
                     </div>
 
@@ -189,8 +234,8 @@ function About() {
                             </div>
 
                             <h2 className="text-4xl lg:text-[46px] font-black text-slate-900 tracking-tight leading-[1.12] mb-5">
-                                Turning Ideas <br />
-                                Into <span className="text-[#0062fe]">Real <br />Solutions</span>
+                                Architects Of <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600">Digital <br />Innovation</span>
                             </h2>
 
                             <p className="text-slate-600 text-base leading-relaxed mb-8 max-w-md font-normal">
@@ -233,11 +278,12 @@ function About() {
                     <div className="col-span-4 relative flex items-end justify-center self-end">
                         <div className="absolute inset-x-8 bottom-0 top-10 rounded-t-[140px] rounded-b-[40px] overflow-hidden border-2 border-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
                             <img
-                                src="/images/founder_office_inner.jpg"
-                                alt="Modern Office Interior"
-                                className="absolute inset-0 w-full h-full object-cover"
+                                src="/images/dsrzone-founder-office-workspace.jpg"
+                                alt="DSRZone Modern Tech Office Workspace"
+                                title="DSRZone Headquarters"
+                                className="absolute inset-0 w-full h-full object-cover opacity-35 filter brightness-105 contrast-90"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-sky-100/20" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/10 via-white/45 to-sky-100/40" />
                         </div>
 
                         <motion.div
@@ -248,8 +294,9 @@ function About() {
                             className="relative z-10 w-full flex justify-center -mb-1"
                         >
                             <img
-                                src="/images/DamithSandunika.png"
-                                alt="Damith Sandunika - Founder & CEO of DSRZone"
+                                src="/images/dsrzone-founder-damith-sandunika.png"
+                                alt="Damith Sandunika – Founder & Lead Software Architect at DSRZone"
+                                title="Damith Sandunika | DSRZone Founder"
                                 className="w-full max-w-[420px] h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.25)] select-none"
                             />
                         </motion.div>

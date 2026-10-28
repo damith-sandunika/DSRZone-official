@@ -11,14 +11,28 @@ function Hero({ onVideoReady }) {
     ];
 
     useEffect(() => {
-        if (videoRef.current && videoRef.current.readyState >= 2) {
-            onVideoReady?.();
-        }
-    }, [onVideoReady]);
+        const video = videoRef.current;
+        if (!video) return;
 
-    const handleReady = () => {
-        onVideoReady?.();
-    };
+        const handleReady = () => {
+            if (video.readyState >= 3) {
+                video.play().catch(() => {});
+                onVideoReady?.();
+            }
+        };
+
+        if (video.readyState >= 3) {
+            handleReady();
+        } else {
+            video.addEventListener('canplaythrough', handleReady, { once: true });
+            video.addEventListener('playing', handleReady, { once: true });
+        }
+
+        return () => {
+            video.removeEventListener('canplaythrough', handleReady);
+            video.removeEventListener('playing', handleReady);
+        };
+    }, [onVideoReady]);
 
     return (
         <section
@@ -26,7 +40,7 @@ function Hero({ onVideoReady }) {
             className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden bg-[#030712] pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-16"
         >
             {/* ══════════════════════════════════════════════════════════════
-                SEAMLESS BACKGROUND VIDEO (NO BOX / NO BORDER)
+                SEAMLESS BACKGROUND VIDEO (NO POSTER IMAGE / NO FLASH)
                 - On Mobile: Sits edge-to-edge at the top (~50vh)
                 - On Desktop: Fullscreen cinematic background
                ══════════════════════════════════════════════════════════════ */}
@@ -37,11 +51,11 @@ function Hero({ onVideoReady }) {
                 muted
                 playsInline
                 preload="auto"
-                onLoadedData={handleReady}
-                onCanPlay={handleReady}
-                onCanPlayThrough={handleReady}
-                onPlaying={handleReady}
-                poster="/images/hero backgroudnd.png"
+                onCanPlayThrough={() => {
+                    videoRef.current?.play().catch(() => {});
+                    onVideoReady?.();
+                }}
+                onPlaying={() => onVideoReady?.()}
                 className="absolute top-0 inset-x-0 w-full h-[52vh] sm:h-[58vh] md:h-full md:inset-0 object-cover object-[75%_center] md:object-center z-0 pointer-events-none"
             >
                 <source src="/images/DSRZone.mp4" type="video/mp4" />

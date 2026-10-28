@@ -17,8 +17,8 @@
     <div class="w-full max-w-md rounded-3xl border border-slate-200/80 bg-white/90 backdrop-blur-xl shadow-2xl shadow-blue-500/10 p-8 sm:p-10">
         {{-- Brand Logo --}}
         <div class="flex flex-col items-center text-center mb-8">
-            <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-xl shadow-blue-500/15 ring-4 ring-white mb-3.5 text-blue-600 border border-slate-100">
-                <img src="/images/DSRZone logo.png" alt="DSRZone Logo" class="w-11 h-11 object-contain" />
+            <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-xl shadow-blue-500/15 ring-4 ring-white mb-3.5 text-blue-600 border border-slate-100 overflow-hidden">
+                <img src="/images/dsrzone-favicon.png" alt="DSRZone Logo" class="w-full h-full object-cover rounded-2xl" />
             </div>
             <h1 class="text-xl font-black text-slate-900 tracking-tight">DSRZone Super Admin</h1>
             <p class="text-xs font-semibold text-slate-500 mt-1">Sign in with your enterprise credentials to manage systems.</p>

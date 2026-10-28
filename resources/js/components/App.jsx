@@ -10,8 +10,8 @@ import Portfolio from './Portfolio';
 import Contact from './Contact';
 import ProjectShowcase from './ProjectShowcase';
 import Testimonials from './Testimonials';
+import CallToAction from './CallToAction';
 import Footer from './Footer';
-import CursorGlow from './CursorGlow';
 import ProductDetail from './ProductDetail';
 import LoadingScreen from './LoadingScreen';
 
@@ -26,6 +26,7 @@ function HomePage({ onVideoReady }) {
                 <Services />
                 <SriLankaMap />
                 <Portfolio />
+                <CallToAction />
                 <Testimonials />
                 <Contact />
                 <ProjectShowcase />
@@ -57,7 +58,6 @@ function App() {
             <div
                 className={`transition-opacity duration-500 ${loading ? 'opacity-0' : 'opacity-100'}`}
             >
-                <CursorGlow />
                 <Routes>
                     <Route path="/" element={<HomePage onVideoReady={handleVideoReady} />} />
                     <Route path="/products/:slug" element={<ProductDetail />} />
