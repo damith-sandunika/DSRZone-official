@@ -29,8 +29,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            // SampleDataSeeder::class,
-            ServiceEnhancementSeeder::class,
+            DsrZoneProductionSeeder::class,
             TestimonialEnhancementSeeder::class,
         ]);
     }
