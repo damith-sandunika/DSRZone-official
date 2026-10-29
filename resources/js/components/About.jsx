@@ -49,7 +49,7 @@ function About() {
 
             {/* ── ENHANCED AMBIENT GEOMETRIC BACKGROUND & FLOATING SHAPES ── */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-                
+
                 {/* 1. Soft Ambient Sky & Blue Radial Glows */}
                 <div
                     className="absolute -top-24 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-100/60 via-sky-100/40 to-transparent rounded-full blur-3xl"
@@ -187,9 +187,8 @@ function About() {
                             {stats.map((s, idx) => (
                                 <div
                                     key={s.label}
-                                    className={`flex items-center gap-4 ${
-                                        idx < stats.length - 1 ? 'pb-5 border-b border-white/10' : ''
-                                    }`}
+                                    className={`flex items-center gap-4 ${idx < stats.length - 1 ? 'pb-5 border-b border-white/10' : ''
+                                        }`}
                                 >
                                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0055ff] to-[#38bdf8] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(0,85,255,0.45)] ring-1 ring-white/20 shrink-0">
                                         {s.icon}
@@ -314,9 +313,8 @@ function About() {
                                     whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.6, delay: idx * 0.1 }}
-                                    className={`flex items-center gap-4 ${
-                                        idx < stats.length - 1 ? 'pb-7 border-b border-white/10' : ''
-                                    }`}
+                                    className={`flex items-center gap-4 ${idx < stats.length - 1 ? 'pb-7 border-b border-white/10' : ''
+                                        }`}
                                 >
                                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#0055ff] to-[#38bdf8] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(0,85,255,0.45)] ring-1 ring-white/20 shrink-0">
                                         {s.icon}

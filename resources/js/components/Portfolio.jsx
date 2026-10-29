@@ -46,7 +46,7 @@ const FALLBACK_PROJECTS = [
     }
 ];
 
-/* ─── Individual Project Card matching user reference design ────────────── */
+/* ─── Individual Project Card matching user reference design ─── */
 function ProjectCard({ project, index }) {
     // Dynamic Accent Color (From DB field or auto-cycled from palette)
     const accentColor = project.accent_color && project.accent_color.startsWith('#')
@@ -56,8 +56,33 @@ function ProjectCard({ project, index }) {
     const projectLogo = project.logo ? imageUrl(project.logo) : null;
     const projectImage = project.image ? imageUrl(project.image) : '/images/dsrzone-enterprise-platform-showcase.jpg';
 
+    // Stylized Angled / Laptop Frame Mockup
+    const renderMockup = (
+        <div className="relative w-full max-w-[480px] group/frame mx-auto">
+            {/* Ribbon Frame Accent around the bottom-right corner */}
+            <div
+                className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 w-[72%] h-[72%] rounded-3xl pointer-events-none transition-transform duration-500 group-hover/frame:translate-x-1.5 group-hover/frame:translate-y-1.5"
+                style={{
+                    background: `linear-gradient(135deg, transparent 35%, ${accentColor} 35%)`,
+                    borderBottom: `4px solid ${accentColor}`,
+                    borderRight: `4px solid ${accentColor}`,
+                    borderRadius: '26px'
+                }}
+            />
+
+            {/* Laptop / Screen Mockup Frame */}
+            <div className="relative z-10 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 border-2 border-white shadow-2xl">
+                <img
+                    src={projectImage}
+                    alt={project.title}
+                    className="w-full h-44 sm:h-56 lg:h-72 object-cover object-top transition-transform duration-700 group-hover/frame:scale-105"
+                />
+            </div>
+        </div>
+    );
+
     return (
-        <ScrollReveal delay={index * 100}>
+        <ScrollReveal delay={index * 80}>
             <article className="group bg-white rounded-3xl lg:rounded-[36px] p-5 sm:p-7 lg:p-10 border border-slate-200/90 shadow-xl shadow-blue-500/5 hover:shadow-2xl hover:border-slate-300 transition-all duration-500 relative flex flex-col xl:flex-row items-center gap-6 sm:gap-8 lg:gap-10">
                 
                 {/* ════════════ LEFT / CONTENT SECTION ════════════ */}
@@ -103,6 +128,11 @@ function ProjectCard({ project, index }) {
                             {project.description || project.solution || 'Custom enterprise software designed and deployed to streamline operations and accelerate business growth.'}
                         </p>
 
+                        {/* ── MOBILE ONLY: IMAGE MOCKUP IN THE MIDDLE ── */}
+                        <div className="xl:hidden my-4 sm:my-5">
+                            {renderMockup}
+                        </div>
+
                         {/* 3. Key Features / Tech Stack Pills */}
                         {Array.isArray(project.technologies) && project.technologies.length > 0 && (
                             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3.5 sm:mt-4 pt-3.5 border-t border-slate-100">
@@ -118,7 +148,7 @@ function ProjectCard({ project, index }) {
                         )}
                     </div>
 
-                    {/* 4. Client Info & Live Project Link (Unified Under Tech Stack & Client) */}
+                    {/* 4. Client Info & Live Project Link (At the bottom of card on both mobile and desktop) */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 mt-5 sm:mt-6 pt-4 border-t border-slate-100">
                         {/* Client Name */}
                         <div className="flex items-center gap-2">
@@ -153,31 +183,9 @@ function ProjectCard({ project, index }) {
 
                 </div>
 
-                {/* ════════════ RIGHT / IMAGE SECTION WITH STYLIZED ANGLED FRAME ════════════ */}
-                <div className="w-full xl:w-[46%] flex items-center justify-center relative p-1 sm:p-2">
-                    <div className="relative w-full max-w-[480px] group/frame">
-                        
-                        {/* Stylized Angled / Ribbon Frame Accent around the bottom-right corner */}
-                        <div
-                            className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 w-[72%] h-[72%] rounded-3xl pointer-events-none transition-transform duration-500 group-hover/frame:translate-x-1.5 group-hover/frame:translate-y-1.5"
-                            style={{
-                                background: `linear-gradient(135deg, transparent 35%, ${accentColor} 35%)`,
-                                borderBottom: `4px solid ${accentColor}`,
-                                borderRight: `4px solid ${accentColor}`,
-                                borderRadius: '26px'
-                            }}
-                        />
-
-                        {/* Laptop / Screen Mockup Frame */}
-                        <div className="relative z-10 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 border-2 border-white shadow-2xl">
-                            <img
-                                src={projectImage}
-                                alt={project.title}
-                                className="w-full h-48 sm:h-64 lg:h-72 object-cover object-top transition-transform duration-700 group-hover/frame:scale-105"
-                            />
-                        </div>
-
-                    </div>
+                {/* ════════════ DESKTOP ONLY: RIGHT / IMAGE SECTION WITH STYLIZED ANGLED FRAME ════════════ */}
+                <div className="hidden xl:flex w-[46%] items-center justify-center relative p-1 sm:p-2">
+                    {renderMockup}
                 </div>
 
             </article>
@@ -188,6 +196,7 @@ function ProjectCard({ project, index }) {
 export default function Portfolio() {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
         axios.get('/api/v1/projects')
@@ -204,6 +213,23 @@ export default function Portfolio() {
     }, []);
 
     const displayList = projects.length > 0 ? projects : FALLBACK_PROJECTS;
+    const visibleProjects = displayList.slice(0, visibleCount);
+
+    // Keep viewport scroll position steady when revealing more cards
+    const handleSeeMore = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        setVisibleCount((prev) => prev + 2);
+
+        requestAnimationFrame(() => {
+            window.scrollTo({
+                top: currentScrollY,
+                behavior: 'instant'
+            });
+        });
+    };
 
     return (
         <section
@@ -299,7 +325,7 @@ export default function Portfolio() {
                                     Turning Ideas into Real Solutions
                                 </span>
                                 <svg className="w-6 h-6 text-blue-500 ml-auto mt-0.5 transform rotate-[-25deg]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                                 </svg>
                             </div>
                         </div>
@@ -316,13 +342,31 @@ export default function Portfolio() {
                     </div>
                 ) : (
                     <div className="flex flex-col gap-6 sm:gap-10">
-                        {displayList.map((project, idx) => (
+                        {visibleProjects.map((project, idx) => (
                             <ProjectCard
                                 key={project.id || idx}
                                 project={project}
                                 index={idx}
                             />
                         ))}
+                    </div>
+                )}
+
+                {/* ─── SEE MORE BUTTON (Loads 2 more on click without jumping viewport) ─── */}
+                {!loading && visibleCount < displayList.length && (
+                    <div className="flex justify-center mt-12 sm:mt-16">
+                        <button
+                            type="button"
+                            onClick={handleSeeMore}
+                            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white border border-blue-200/90 hover:border-blue-500 text-slate-800 hover:text-blue-600 font-extrabold text-sm sm:text-base shadow-lg shadow-blue-500/5 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:scale-105 active:scale-95"
+                        >
+                            <span>See More Projects</span>
+                            <span className="w-7 h-7 rounded-full bg-blue-50 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-colors">
+                                <svg className="w-4 h-4 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </button>
                     </div>
                 )}
 
