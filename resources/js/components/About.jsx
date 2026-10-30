@@ -143,7 +143,7 @@ function About() {
                         {/* Founder Photo - Head and shoulders rise ABOVE the top of the background arch! */}
                         <img
                             src="/images/dsrzone-founder-damith-sandunika.png"
-                            alt="Damith Sandunika – Founder & Lead Software Architect at DSRZone (DSR)"
+                            alt="Damith Sandunika – Founder & Lead Software Architect at DSRZone"
                             title="Damith Sandunika – Founder of DSRZone"
                             className="relative z-10 w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.28)] select-none -mb-1 transform scale-[1.03] transition-transform duration-300"
                         />

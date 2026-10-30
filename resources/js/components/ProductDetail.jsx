@@ -128,11 +128,11 @@ function ProductDetail() {
                         <div className="lg:col-span-3">
                             <div className="flex items-start gap-4 mb-4">
                                 {product.logo ? (
-                                    <img src={product.logo.startsWith('http') || product.logo.startsWith('/') ? product.logo : imageUrl(product.logo)} alt="" className="w-20 h-20 rounded-xl object-contain shrink-0 bg-white/5 border border-white/10" />
+                                    <img src={product.logo.startsWith('http') || product.logo.startsWith('/') ? product.logo : imageUrl(product.logo)} alt="" className="w-20 h-20 rounded-2xl sm:rounded-3xl object-contain shrink-0 bg-white/5 border border-white/10 p-1.5" />
                                 ) : product.icon && (product.icon.startsWith('http') || product.icon.startsWith('/')) ? (
-                                    <img src={product.icon} alt="" className="w-20 h-20 rounded-xl object-contain shrink-0 bg-white/5 border border-white/10" />
+                                    <img src={product.icon} alt="" className="w-20 h-20 rounded-2xl sm:rounded-3xl object-contain shrink-0 bg-white/5 border border-white/10 p-1.5" />
                                 ) : (
-                                    <div className="w-20 h-20 rounded-xl flex items-center justify-center text-3xl font-bold text-white shrink-0" style={{ backgroundColor: accent }}>
+                                    <div className="w-20 h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl font-bold text-white shrink-0" style={{ backgroundColor: accent }}>
                                         {product.name.charAt(0)}
                                     </div>
                                 )}

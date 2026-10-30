@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -8,12 +9,12 @@
     @php
         $siteUrl = config('app.url', 'https://dsrzone.com');
         $pageTitle = isset($metaProduct) && $metaProduct
-            ? e($metaProduct->name) . ' – DSRZone (DSR) Enterprise Software Solutions'
-            : 'DSRZone (DSR) – Leading IT & Software Solutions in Sri Lanka | Web & App Development';
+            ? e($metaProduct->name) . ' – DSRZone Enterprise Software Solutions'
+            : 'DSRZone – Leading IT & Software Solutions in Sri Lanka | Web & App Development';
 
         $pageDesc = isset($metaProduct) && $metaProduct
             ? e($metaProduct->tagline ?: Str::limit($metaProduct->description, 160))
-            : 'DSRZone (DSR) is Sri Lanka\'s premier technology powerhouse specializing in custom software development, enterprise business systems, modern web development, mobile apps, ERP, CRM, and cloud solutions. Born to Innovate.';
+            : 'DSRZone is Sri Lanka\'s premier technology powerhouse specializing in custom software development, enterprise business systems, modern web development, mobile apps, ERP, CRM, and cloud solutions. Born to Innovate.';
 
         $mediaService = app(\App\Services\MediaService::class);
         $pageImg = isset($metaProduct) && $metaProduct && $metaProduct->background_image
@@ -103,8 +104,9 @@
     <title>{{ $pageTitle }}</title>
     <meta name="title" content="{{ $pageTitle }}">
     <meta name="description" content="{{ $pageDesc }}">
-    <meta name="keywords" content="DSR, DSRZone, DSR Zone, DSR IT, DSR Software, DSR Sri Lanka, IT Solutions Sri Lanka, Web Development Sri Lanka, Custom Software Sri Lanka, ERP Sri Lanka, CRM Sri Lanka, Mobile App Development Colombo, Software Company Sri Lanka, Digital Agency Sri Lanka, DSR Tech, Web Systems, Cloud Solutions Sri Lanka, Enterprise Systems, Damith Sandunika">
-    <meta name="author" content="DSRZone (DSR)">
+    <meta name="keywords"
+        content="DSR, DSRZone, DSR Zone, DSR IT, DSR Software, DSR Sri Lanka, IT Solutions Sri Lanka, Web Development Sri Lanka, Custom Software Sri Lanka, ERP Sri Lanka, CRM Sri Lanka, Mobile App Development Colombo, Software Company Sri Lanka, Digital Agency Sri Lanka, DSR Tech, Web Systems, Cloud Solutions Sri Lanka, Enterprise Systems, Damith Sandunika">
+    <meta name="author" content="DSRZone">
     <meta name="publisher" content="DSRZone">
     <meta name="application-name" content="DSRZone">
     <meta name="theme-color" content="#02050e">
@@ -135,7 +137,7 @@
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $pageDesc }}">
     <meta name="twitter:image" content="{{ $pageImg }}">
-    <meta name="twitter:image:alt" content="DSRZone (DSR) Enterprise Software Platform">
+    <meta name="twitter:image:alt" content="DSRZone Enterprise Software Platform">
 
     <!-- ── CANONICAL & FAVICON ── -->
     <link rel="canonical" href="{{ $canonicalUrl }}">
@@ -148,7 +150,9 @@
     <!-- ── GOOGLE FONTS PRECONNECT ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- ── GOOGLE STRUCTURED DATA (JSON-LD SCHEMA) ── -->
     <script type="application/ld+json">
@@ -157,7 +161,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
+
 <body class="antialiased bg-[#02050e] text-white selection:bg-blue-600 selection:text-white">
     <div id="app"></div>
 </body>
+
 </html>

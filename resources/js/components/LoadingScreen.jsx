@@ -154,7 +154,7 @@ export default function LoadingScreen({ onComplete, videoReady = false }) {
                         >
                             <img
                                 src="/images/dsrzone-logo-preloader.png"
-                                alt="DSRZone (DSR) – Born to Innovate"
+                                alt="DSRZone Born to Innovate"
                                 title="DSRZone – Born to Innovate"
                                 className="w-28 sm:w-44 md:w-56 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_25px_rgba(56,189,248,0.45)]"
                             />

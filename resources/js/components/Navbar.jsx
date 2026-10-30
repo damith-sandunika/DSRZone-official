@@ -98,13 +98,12 @@ function Navbar() {
     };
 
     return (
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-            isMobileMenuOpen 
-                ? 'bg-[#02050e]/98 backdrop-blur-2xl border-b border-white/10 py-3' 
+        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isMobileMenuOpen
+                ? 'bg-[#02050e]/98 backdrop-blur-2xl border-b border-white/10 py-3'
                 : isScrolled
                     ? 'bg-[#02050e]/95 backdrop-blur-xl border-b border-white/10 py-3 sm:py-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.85)]'
                     : 'bg-transparent border-transparent py-5 sm:py-6'
-        }`}>
+            }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 {/* Brand Logo */}
                 <a
@@ -114,7 +113,7 @@ function Navbar() {
                 >
                     <img
                         src="/images/dsrzone-official-logo.png"
-                        alt="DSRZone (DSR) – Software & IT Solutions Sri Lanka"
+                        alt="DSRZone – Software & IT Solutions Sri Lanka"
                         title="DSRZone – Born to Innovate"
                         className="h-9 sm:h-11 w-auto object-contain transition-transform group-hover:scale-105"
                     />
@@ -129,9 +128,8 @@ function Navbar() {
                                 key={link.label}
                                 href={link.href}
                                 onClick={(e) => handleLinkClick(e, link)}
-                                className={`text-sm font-semibold transition-all relative py-1 cursor-pointer ${
-                                    isActive ? 'text-white' : 'text-slate-300 hover:text-white'
-                                }`}
+                                className={`text-sm font-semibold transition-all relative py-1 cursor-pointer ${isActive ? 'text-white' : 'text-slate-300 hover:text-white'
+                                    }`}
                             >
                                 {link.label}
                                 {isActive && (
@@ -191,9 +189,8 @@ function Navbar() {
                                     key={link.label}
                                     href={link.href}
                                     onClick={(e) => handleLinkClick(e, link)}
-                                    className={`py-2 text-base font-semibold transition-colors cursor-pointer ${
-                                        activeSection === link.id ? 'text-[#38bdf8]' : 'text-slate-300 hover:text-white'
-                                    }`}
+                                    className={`py-2 text-base font-semibold transition-colors cursor-pointer ${activeSection === link.id ? 'text-[#38bdf8]' : 'text-slate-300 hover:text-white'
+                                        }`}
                                 >
                                     {link.label}
                                 </a>

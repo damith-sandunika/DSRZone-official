@@ -114,7 +114,7 @@ export default function ProjectShowcase() {
                 <div className="absolute inset-x-0 top-[52%] -translate-y-1/2 sm:top-auto sm:bottom-0 sm:translate-y-0 w-full aspect-[1376/768] sm:h-full sm:aspect-auto pointer-events-none z-10 overflow-hidden">
                     <img
                         src="/images/dsrzone-enterprise-platform-showcase.jpg"
-                        alt="DSRZone (DSR) Enterprise Business Systems – All-in-One Cloud Management Platform"
+                        alt="DSRZone Enterprise Business Systems – All-in-One Cloud Management Platform"
                         title="DSRZone Enterprise Platform Architecture"
                         className="w-full h-full object-cover object-center sm:object-bottom"
                     />

@@ -135,16 +135,16 @@ export default function Products() {
                                     <div className="relative group-hover:scale-110 transition-transform duration-300">
                                         {/* Ambient soft glow ring */}
                                         <div
-                                            className="absolute -inset-1 rounded-xl sm:rounded-2xl opacity-60 blur-md group-hover:opacity-100 transition-opacity"
+                                            className="absolute -inset-1 rounded-2xl sm:rounded-3xl opacity-60 blur-md group-hover:opacity-100 transition-opacity"
                                             style={{ backgroundColor: accent }}
                                         />
 
-                                        <div className="relative w-12 h-12 sm:w-16 sm:h-16 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-[#07132c]/95 backdrop-blur-md p-2 sm:p-2.5 border-2 border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.6)] flex items-center justify-center overflow-hidden">
+                                        <div className="relative w-12 h-12 sm:w-16 sm:h-16 lg:w-16 lg:h-16 rounded-2xl sm:rounded-3xl bg-[#07132c]/95 backdrop-blur-md p-1.5 sm:p-2 border-2 border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.6)] flex items-center justify-center overflow-hidden">
                                             {logoImg ? (
                                                 <img
                                                     src={logoImg}
                                                     alt={prod.name}
-                                                    className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
+                                                    className="w-full h-full object-contain rounded-xl sm:rounded-2xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
                                                 />
                                             ) : (
                                                 <span className="text-xl sm:text-2xl font-black text-cyan-300">

@@ -38,7 +38,7 @@ function Footer() {
                     whatsapp: res.data.whatsapp || prev.whatsapp,
                 }));
             }
-        }).catch(() => {});
+        }).catch(() => { });
     }, []);
 
     const whatsappHref = contactDetails.whatsapp
@@ -79,7 +79,7 @@ function Footer() {
                         <a href="#home" className="inline-block group">
                             <img
                                 src="/images/dsrzone-official-logo.png"
-                                alt="DSRZone (DSR) – Enterprise Software Solutions Sri Lanka"
+                                alt="DSRZone – Enterprise Software Solutions Sri Lanka"
                                 title="DSRZone – Architects of the Digital Future"
                                 className="h-11 sm:h-12 w-auto object-contain filter drop-shadow-[0_2px_12px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform"
                             />
