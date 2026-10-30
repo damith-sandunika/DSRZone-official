@@ -156,7 +156,9 @@ export default function Products() {
 
                                     {/* Product Title & Subtitle */}
                                     <h3 className="text-xs sm:text-base lg:text-[17px] font-black text-white tracking-tight mt-2.5 sm:mt-3 text-center group-hover:text-cyan-300 transition-colors line-clamp-2 leading-snug">
-                                        {prod.name}
+                                        <Link to={`/products/${prod.slug}`} className="hover:underline">
+                                            {prod.name}
+                                        </Link>
                                     </h3>
                                     
                                     <p className="text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#38bdf8] mt-0.5 sm:mt-1 text-center line-clamp-1">
@@ -190,17 +192,17 @@ export default function Products() {
                                     </div>
                                 </div>
 
-                                {/* 5. ACTION CTA BUTTON */}
+                                {/* 5. ACTION CTA BUTTON -> Links to Contact Us (#contact) */}
                                 <div className="relative z-10 p-2.5 sm:p-4 pt-1 sm:pt-2">
-                                    <Link
-                                        to={`/products/${prod.slug}`}
+                                    <a
+                                        href="#contact"
                                         className="w-full py-2 sm:py-2.5 rounded-xl sm:rounded-2xl font-bold text-[10px] sm:text-xs flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-[0_6px_16px_rgba(16,98,254,0.35)] group-hover:shadow-[0_10px_24px_rgba(14,165,233,0.5)] active:scale-95 transition-all cursor-pointer"
                                     >
-                                        <span>Explore Details</span>
+                                        <span>Get Demo / Contact Us</span>
                                         <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                         </svg>
-                                    </Link>
+                                    </a>
                                 </div>
                             </motion.div>
                         );
