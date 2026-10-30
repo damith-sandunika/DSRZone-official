@@ -160,7 +160,7 @@ export default function Products() {
                                             {prod.name}
                                         </Link>
                                     </h3>
-                                    
+
                                     <p className="text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#38bdf8] mt-0.5 sm:mt-1 text-center line-clamp-1">
                                         {prod.tagline || 'Management System'}
                                     </p>
@@ -198,7 +198,7 @@ export default function Products() {
                                         href="#contact"
                                         className="w-full py-2 sm:py-2.5 rounded-xl sm:rounded-2xl font-bold text-[10px] sm:text-xs flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-[0_6px_16px_rgba(16,98,254,0.35)] group-hover:shadow-[0_10px_24px_rgba(14,165,233,0.5)] active:scale-95 transition-all cursor-pointer"
                                     >
-                                        <span>Get Demo / Contact Us</span>
+                                        <span>Get Details</span>
                                         <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                         </svg>
