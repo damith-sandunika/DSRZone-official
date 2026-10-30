@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
 import { products as staticProducts } from '../data/products';
 import { imageUrl } from '../utils/imageUrl';
@@ -155,10 +154,8 @@ export default function Products() {
                                     </div>
 
                                     {/* Product Title & Subtitle */}
-                                    <h3 className="text-xs sm:text-base lg:text-[17px] font-black text-white tracking-tight mt-2.5 sm:mt-3 text-center group-hover:text-cyan-300 transition-colors line-clamp-2 leading-snug">
-                                        <Link to={`/products/${prod.slug}`} className="hover:underline">
-                                            {prod.name}
-                                        </Link>
+                                    <h3 className="text-xs sm:text-base lg:text-[17px] font-black text-white tracking-tight mt-2.5 sm:mt-3 text-center transition-colors line-clamp-2 leading-snug">
+                                        {prod.name}
                                     </h3>
 
                                     <p className="text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#38bdf8] mt-0.5 sm:mt-1 text-center line-clamp-1">
